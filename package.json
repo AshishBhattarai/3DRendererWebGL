@@ -1,0 +1,24 @@
+{
+  "name": "physim",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "./process_shaders.sh && parcel index.html",
+    "build": "./process_shaders.sh && parcel build index.html",
+    "watch": "node ph-bundler.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@types/webgl2": "0.0.4",
+    "parcel-bundler": "^1.12.2",
+    "typescript": "^3.4.5"
+  },
+  "dependencies": {
+    "@types/gl-matrix": "^2.4.5",
+    "gl-matrix": "^3.0.0"
+  }
+}
