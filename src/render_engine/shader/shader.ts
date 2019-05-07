@@ -44,5 +44,6 @@ export default class Shader {
 
   public delete(): void {
     gl.deleteProgram(this.program);
+    this.program = null;
   }
 }

@@ -13,9 +13,6 @@ export interface IMaterial {
   diffuse?: vec3;
   specular?: vec3;
   shininess?: number;
-  ka?: number;
-  kd?: number;
-  ks?: number;
   materialShader?: MaterialShader;
 }
 
@@ -24,9 +21,6 @@ export default class Material {
   public diffuse: vec3;
   public specular: vec3;
   public shininess: number;
-  public ka: number;
-  public kd: number;
-  public ks: number;
   public materialShader: MaterialShader;
 
   constructor(iMaterial?: IMaterial) {
@@ -40,14 +34,10 @@ export default class Material {
         this.diffuse = iMaterial.diffuse || MaterialDefault.color;
         this.specular = iMaterial.specular || MaterialDefault.color;
         this.shininess = iMaterial.shininess || MaterialDefault.shininess;
-        this.ka = iMaterial.ka || MaterialDefault.intensity;
-        this.kd = iMaterial.kd || MaterialDefault.intensity;
-        this.ks = iMaterial.ks || MaterialDefault.intensity;
         break;
 
       case MaterialShader.UNLIT_MATERIAL_COLOR_SHADER:
         this.ambient = iMaterial.ambient || MaterialDefault.color;
-        this.ka = iMaterial.ka || MaterialDefault.intensity;
         break;
     }
   }

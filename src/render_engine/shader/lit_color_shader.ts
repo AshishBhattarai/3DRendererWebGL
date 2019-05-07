@@ -14,9 +14,6 @@ export default class LitColorShader extends Shader {
   private diffuseLoc: WebGLUniformLocation;
   private specularLoc: WebGLUniformLocation;
   private shininessLoc: WebGLUniformLocation;
-  private kaLoc: WebGLUniformLocation;
-  private kdLoc: WebGLUniformLocation;
-  private ksLoc: WebGLUniformLocation;
 
   /* Sun */
   private sunPosLoc: WebGLUniformLocation;
@@ -36,9 +33,6 @@ export default class LitColorShader extends Shader {
     this.diffuseLoc = this.getUniformLocation("material.diffuse");
     this.specularLoc = this.getUniformLocation("material.specular");
     this.shininessLoc = this.getUniformLocation("material.shininess");
-    this.kaLoc = this.getUniformLocation("material.ka");
-    this.kdLoc = this.getUniformLocation("material.kd");
-    this.ksLoc = this.getUniformLocation("material.ks");
 
     /* Sun */
     this.sunPosLoc = this.getUniformLocation("sunPosition");
@@ -52,9 +46,6 @@ export default class LitColorShader extends Shader {
     gl.uniform3fv(this.diffuseLoc, material.diffuse);
     gl.uniform3fv(this.specularLoc, material.specular);
     gl.uniform1f(this.shininessLoc, material.shininess);
-    gl.uniform1f(this.kaLoc, material.ka);
-    gl.uniform1f(this.kdLoc, material.kd);
-    gl.uniform1f(this.ksLoc, material.ks);
   }
 
   public loadSun(sunPosition: vec3, sunColor: vec3): void {
