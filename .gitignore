@@ -1,0 +1,9 @@
+.vscode
+.cache
+dist/*.ts
+dist/*.js
+dist/*.map
+dist/*.html
+node_modules
+package-lock.json
+src/render_engine/shader/glsl/shader_source.ts
