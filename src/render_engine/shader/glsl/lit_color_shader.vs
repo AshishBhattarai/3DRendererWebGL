@@ -6,11 +6,14 @@ out vec3 normal;
 out vec3 toSun;
 out vec3 toCamera;
 
-uniform vec3 sunPosition;
-uniform vec3 cameraPosition;
-
-uniform mat4 projectionMat;
 uniform mat4 tranformationMat;
+
+layout(std140)uniform GlobalVSData{
+	mat4 projectionMat;
+	// mat4 viewMat;
+	vec3 cameraPosition;
+	vec3 sunPosition;
+};
 
 void main(void){
 	vec4 worldposition=tranformationMat*vec4(aPosition,1.f);

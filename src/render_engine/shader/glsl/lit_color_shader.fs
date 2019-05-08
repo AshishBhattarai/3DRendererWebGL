@@ -12,9 +12,12 @@ struct Material{
 	float shininess;
 };
 
-uniform vec3 sunColor;
 uniform Material material;
-uniform float sceneAmbient;
+
+layout(std140)uniform GlobalFSData{
+	vec3 sunColor;
+	float sceneAmbient;
+};
 
 void main(void){
 	vec3 in_normal=normalize(normal);

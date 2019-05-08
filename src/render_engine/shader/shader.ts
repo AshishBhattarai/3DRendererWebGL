@@ -34,6 +34,15 @@ export default class Shader {
     return loc;
   }
 
+  public setUniformBlockBinding(name: string, bindingPoint: number): void {
+    var index = gl.getUniformBlockIndex(this.program, name);
+    if (index == gl.INVALID_INDEX) {
+      console.log("Error: Invalid index for block " + name);
+      return;
+    }
+    gl.uniformBlockBinding(this.program, index, bindingPoint);
+  }
+
   public start(): void {
     gl.useProgram(this.program);
   }

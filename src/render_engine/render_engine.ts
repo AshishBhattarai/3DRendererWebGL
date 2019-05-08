@@ -5,6 +5,9 @@ import Model from "./model/model";
 import LitColorShader from "./shader/lit_color_shader";
 import DisplayManager from "./renderer/display_manager";
 import { LitColorRenderer } from "./renderer/lit_color_renderer";
+import GlobalVSBuffer from "./shader/global_vs_buffer";
+import GlobalFSBuffer from "./shader/global_fs_buffer";
+import { ShaderConfig } from "./shader/shader_config";
 
 export default class RenderEngine {
   private testModel: Model;
@@ -13,6 +16,8 @@ export default class RenderEngine {
 
   private litColorShader: LitColorShader;
   private litColorRenderer: LitColorRenderer;
+  private globalVSBuffer: GlobalVSBuffer;
+  private globalFSBuffer: GlobalFSBuffer;
   private prespectiveProj: mat4;
   private sunPosition: vec3;
   private sunColor: vec3;
@@ -20,11 +25,14 @@ export default class RenderEngine {
   private sceneAmbient: number;
 
   constructor() {
-    this.sceneAmbient = 0.2;
-    var vpSize = DisplayManager.getInstance().getViewportSize();
     this.testModel = new Model();
     this.litColorShader = new LitColorShader();
     this.litColorRenderer = new LitColorRenderer(this.litColorShader);
+    this.globalFSBuffer = new GlobalFSBuffer();
+    this.globalVSBuffer = new GlobalVSBuffer();
+
+    this.sceneAmbient = 0.2;
+    var vpSize = DisplayManager.getInstance().getViewportSize();
     this.prespectiveProj = mat4.create();
     mat4.perspective(
       this.prespectiveProj,
@@ -34,6 +42,15 @@ export default class RenderEngine {
       1000.0
     );
 
+    this.litColorShader.setUniformBlockBinding(
+      ShaderConfig.GlobalVSBuffer,
+      this.globalVSBuffer.getBindingPoint()
+    );
+    this.litColorShader.setUniformBlockBinding(
+      ShaderConfig.GlobalFSBuffer,
+      this.globalFSBuffer.getBindingPoint()
+    );
+
     this.testPostion = vec3.fromValues(0, 0, -5);
     this.testTranform = mat4.create();
     mat4.translate(this.testTranform, this.testTranform, this.testPostion);
@@ -41,12 +58,11 @@ export default class RenderEngine {
     this.sunPosition = vec3.fromValues(0, 0, 5);
     this.sunColor = vec3.fromValues(1, 1, 1);
 
-    this.litColorShader.start();
-    this.litColorShader.loadSun(this.sunPosition, this.sunColor);
-    this.litColorShader.loadProjection(this.prespectiveProj);
-    this.litColorShader.loadCameraPosition(vec3.fromValues(0, 0, 0));
-    this.litColorShader.loadSceneAmbient(this.sceneAmbient);
-    this.litColorShader.stop();
+    this.globalFSBuffer.setSceneAmbient(this.sceneAmbient);
+    this.globalFSBuffer.setSunColor(this.sunColor);
+    this.globalVSBuffer.setCameraPosition(vec3.fromValues(0, 0, 0));
+    this.globalVSBuffer.setProjectionMatrix(this.prespectiveProj);
+    this.globalVSBuffer.setSunPosition(this.sunPosition);
 
     console.log(gl.getError());
   }
