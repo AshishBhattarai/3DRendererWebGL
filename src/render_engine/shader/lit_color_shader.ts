@@ -10,7 +10,6 @@ export default class LitColorShader extends Shader {
   private tranformationLoc: WebGLUniformLocation;
 
   /* Material */
-  private ambientLoc: WebGLUniformLocation;
   private diffuseLoc: WebGLUniformLocation;
   private specularLoc: WebGLUniformLocation;
   private shininessLoc: WebGLUniformLocation;
@@ -19,6 +18,8 @@ export default class LitColorShader extends Shader {
   private sunPosLoc: WebGLUniformLocation;
   private cameraPosLoc: WebGLUniformLocation;
   private sunColLoc: WebGLUniformLocation;
+
+  private sceneAmbientLoc: WebGLUniformLocation;
 
   constructor() {
     super(lit_color_shader_vs, lit_color_shader_fs);
@@ -29,7 +30,7 @@ export default class LitColorShader extends Shader {
     this.tranformationLoc = this.getUniformLocation("tranformationMat");
 
     /* Material */
-    this.ambientLoc = this.getUniformLocation("material.ambient");
+    this.sceneAmbientLoc = this.getUniformLocation("sceneAmbient");
     this.diffuseLoc = this.getUniformLocation("material.diffuse");
     this.specularLoc = this.getUniformLocation("material.specular");
     this.shininessLoc = this.getUniformLocation("material.shininess");
@@ -42,7 +43,6 @@ export default class LitColorShader extends Shader {
   }
 
   public loadMaterial(material: Material): void {
-    gl.uniform3fv(this.ambientLoc, material.ambient);
     gl.uniform3fv(this.diffuseLoc, material.diffuse);
     gl.uniform3fv(this.specularLoc, material.specular);
     gl.uniform1f(this.shininessLoc, material.shininess);
@@ -63,5 +63,9 @@ export default class LitColorShader extends Shader {
 
   public loadCameraPosition(cameraPosition: vec3) {
     gl.uniform3fv(this.cameraPosLoc, cameraPosition);
+  }
+
+  public loadSceneAmbient(sceneAmbient: number) {
+    gl.uniform1f(this.sceneAmbientLoc, sceneAmbient);
   }
 }

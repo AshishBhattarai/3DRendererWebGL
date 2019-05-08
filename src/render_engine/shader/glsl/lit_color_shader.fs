@@ -7,7 +7,6 @@ in vec3 toSun;
 in vec3 toCamera;
 
 struct Material{
-	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
@@ -15,9 +14,9 @@ struct Material{
 
 uniform vec3 sunColor;
 uniform Material material;
+uniform float sceneAmbient;
 
 void main(void){
-	vec3 ambient=material.ambient;
 	vec3 in_normal=normalize(normal);
 	vec3 in_toSun=normalize(toSun);
 	vec3 in_toCamera=normalize(toCamera);
@@ -25,13 +24,11 @@ void main(void){
 	float halfLamb=(dot(in_toSun,in_normal)*.5f)+.5f;
 	halfLamb*=halfLamb;
 	vec3 diffuse=halfLamb*material.diffuse;
-	vec3 specular=vec3(0.f);
-	if(halfLamb>0.f){
-		/* Blinn–Phong */
-		vec3 halfwayDir=normalize(in_toSun+in_toCamera);
-		float sFactor=pow(max(dot(in_normal,halfwayDir),0.f),material.shininess);
-		specular=sFactor*material.specular;
-	}
-	vec3 finalColor=(ambient+diffuse+specular)*sunColor;
+	/* Blinn–Phong */
+	vec3 halfwayDir=normalize(in_toSun+in_toCamera);
+	float sFactor=pow(max(dot(in_normal,halfwayDir),0.f),material.shininess);
+	vec3 specular=sFactor*material.specular;
+	vec3 finalColor=(diffuse+specular)*sunColor;
+	finalColor=max(finalColor,sceneAmbient*diffuse);
 	FragColor=vec4(finalColor,1.f);
 }

@@ -17,7 +17,10 @@ export default class RenderEngine {
   private sunPosition: vec3;
   private sunColor: vec3;
 
+  private sceneAmbient: number;
+
   constructor() {
+    this.sceneAmbient = 0.2;
     var vpSize = DisplayManager.getInstance().getViewportSize();
     this.testModel = new Model();
     this.litColorShader = new LitColorShader();
@@ -42,6 +45,7 @@ export default class RenderEngine {
     this.litColorShader.loadSun(this.sunPosition, this.sunColor);
     this.litColorShader.loadProjection(this.prespectiveProj);
     this.litColorShader.loadCameraPosition(vec3.fromValues(0, 0, 0));
+    this.litColorShader.loadSceneAmbient(this.sceneAmbient);
     this.litColorShader.stop();
 
     console.log(gl.getError());

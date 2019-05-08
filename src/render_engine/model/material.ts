@@ -1,26 +1,41 @@
 import { vec3 } from "gl-matrix";
 import { MaterialShader } from "../shader/shader_config";
+import Texture from "./texture";
 
 class MaterialDefault {
-  public static readonly color = vec3.fromValues(0.5, 0.5, 0.5);
+  public static readonly colorW = vec3.fromValues(1, 1, 1);
+  public static readonly colorB = vec3.fromValues(0, 0, 0);
   public static readonly shininess = 16.0;
   public static readonly intensity = 1;
   public static readonly shader = MaterialShader.LIT_MATERIAL_COLOR_SHADER;
 }
 
 export interface IMaterial {
-  ambient?: vec3;
   diffuse?: vec3;
   specular?: vec3;
   shininess?: number;
+  diffuseMap?: Texture;
+  specularMap?: Texture;
+  emissionMap?: Texture;
   materialShader?: MaterialShader;
 }
 
 export default class Material {
-  public ambient: vec3;
+  public name: String;
+
+  // colors
   public diffuse: vec3;
   public specular: vec3;
+  public emission: vec3;
+
+  // factors
   public shininess: number;
+
+  // textures
+  public diffuseMap: Texture;
+  public specularMap: Texture;
+  public emissionMap: Texture;
+
   public materialShader: MaterialShader;
 
   constructor(iMaterial?: IMaterial) {
@@ -30,15 +45,22 @@ export default class Material {
 
     switch (+this.materialShader) {
       case MaterialShader.LIT_MATERIAL_COLOR_SHADER:
-        this.ambient = iMaterial.ambient || MaterialDefault.color;
-        this.diffuse = iMaterial.diffuse || MaterialDefault.color;
-        this.specular = iMaterial.specular || MaterialDefault.color;
+        this.diffuse = iMaterial.diffuse || MaterialDefault.colorW;
+        this.specular = iMaterial.specular || MaterialDefault.colorB;
         this.shininess = iMaterial.shininess || MaterialDefault.shininess;
         break;
+    }
+  }
 
-      case MaterialShader.UNLIT_MATERIAL_COLOR_SHADER:
-        this.ambient = iMaterial.ambient || MaterialDefault.color;
-        break;
+  public release() {
+    if (this.diffuseMap) {
+      this.diffuseMap.release();
+    }
+    if (this.specularMap) {
+      this.specularMap.release();
+    }
+    if (this.emissionMap) {
+      this.emissionMap.release();
     }
   }
 }
