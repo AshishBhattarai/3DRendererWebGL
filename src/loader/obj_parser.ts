@@ -10,6 +10,8 @@ export default class ObjParser extends ModelParser {
   private pNormals: number[];
   private pTexCoords: number[];
 
+  private mtlFile: String;
+
   constructor(objData: string) {
     super();
     this.nVertices = [];
@@ -19,6 +21,8 @@ export default class ObjParser extends ModelParser {
 
     this.pNormals = [];
     this.pTexCoords = [];
+
+    this.mtlFile = "";
 
     var vertices: Float32Array;
     var normals: Float32Array;
@@ -77,6 +81,9 @@ export default class ObjParser extends ModelParser {
         this.processFaces(split[2]);
         this.processFaces(split[3]);
         break;
+      case "mtllib":
+        this.mtlFile = split[1];
+        break;
     }
   }
 
@@ -99,18 +106,23 @@ export default class ObjParser extends ModelParser {
     } else {
       faceVerts = faceLine.split("//");
     }
-    let iV = (+faceVerts[0] - 1) * 3;
+    let nV = (+faceVerts[0] - 1) * 3;
+    let tV = (+faceVerts[0] - 1) * 2;
     if (faceVerts.length == 3) {
       // with texture coords
       let iT = (+faceVerts[1] - 1) * 2;
       let iN = (+faceVerts[2] - 1) * 3;
-      this.orderTextureCoords(iV, iT);
-      this.orderNormal(iV, iN);
+      this.orderTextureCoords(tV, iT);
+      this.orderNormal(nV, iN);
     } else if (faceVerts.length == 2) {
       // without texture coords
       let iN = (+faceVerts[1] - 1) * 3;
-      this.orderNormal(iV, iN);
+      this.orderNormal(nV, iN);
     }
-    this.nIndices.push(iV / 3);
+    this.nIndices.push(tV / 2);
+  }
+
+  public getmtlFile(): String {
+    return this.mtlFile;
   }
 }
