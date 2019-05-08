@@ -2,6 +2,12 @@ import DisplayManager from "./render_engine/renderer/display_manager";
 import RenderEngine from "./render_engine/render_engine";
 import Loader from "./loader/loader";
 import Model, { DefaultMesh } from "./render_engine/model/model";
+import Texture, { TextureType } from "./render_engine/model/texture";
+import Material from "./render_engine/model/material";
+import {
+  ShaderConfig,
+  MaterialShader
+} from "./render_engine/shader/shader_config";
 
 export default class Main {
   private static display = DisplayManager.getInstance();
@@ -14,10 +20,19 @@ export default class Main {
     this.renderEngine.prepare();
 
     let loader = new Loader((model: Model, name: string) => {
-      this.renderEngine.seRenderMesh(model.mesh);
+      let image = new Image();
+      image.onload = () => {
+        let mat = new Material({
+          diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
+          materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+        });
+        model.material = mat;
+        this.renderEngine.seRenderMesh(model);
+      };
+      image.src = "res/texture.png";
     });
 
-    loader.loadModel("res/test.obj");
+    loader.loadModel("res/goat.obj");
 
     this.animationLoop(0);
   }

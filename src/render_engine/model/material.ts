@@ -42,12 +42,16 @@ export default class Material {
     if (iMaterial == null) iMaterial = {};
 
     this.materialShader = iMaterial.materialShader || MaterialDefault.shader;
+    this.shininess = iMaterial.shininess || MaterialDefault.shininess;
 
     switch (+this.materialShader) {
       case MaterialShader.LIT_MATERIAL_COLOR_SHADER:
         this.diffuse = iMaterial.diffuse || MaterialDefault.colorW;
         this.specular = iMaterial.specular || MaterialDefault.colorB;
-        this.shininess = iMaterial.shininess || MaterialDefault.shininess;
+        break;
+      case MaterialShader.LIT_MATERIAL_TEXTURE_SHADER:
+        this.diffuseMap = iMaterial.diffuseMap;
+        // this.specularMap = iMaterial.specularMap || iMaterial.diffuseMap;
         break;
     }
   }

@@ -26,6 +26,7 @@ export default class Mesh {
     //TODO: this(enable attrib) on main renderer -> render_engine.ts
     gl.enableVertexAttribArray(ShaderConfig.VERTEX_LOC);
     gl.enableVertexAttribArray(ShaderConfig.NORMAL_LOC);
+    gl.enableVertexAttribArray(ShaderConfig.UV_LOC);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, iMesh.vertexData, gl.STATIC_DRAW);
@@ -45,8 +46,6 @@ export default class Mesh {
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    gl.disableVertexAttribArray(ShaderConfig.VERTEX_LOC);
-    gl.disableVertexAttribArray(ShaderConfig.NORMAL_LOC);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, iMesh.indexData, gl.STATIC_DRAW);
     gl.bindVertexArray(null);
@@ -63,11 +62,7 @@ export default class Mesh {
 
   public drawMesh(): void {
     gl.bindVertexArray(this.vao);
-    gl.enableVertexAttribArray(ShaderConfig.VERTEX_LOC);
-    gl.enableVertexAttribArray(ShaderConfig.NORMAL_LOC);
     gl.drawElements(gl.TRIANGLES, this.index_cnt, gl.UNSIGNED_INT, 0);
-    gl.disableVertexAttribArray(ShaderConfig.VERTEX_LOC);
-    gl.disableVertexAttribArray(ShaderConfig.NORMAL_LOC);
   }
 
   public clearBuffer(): void {
