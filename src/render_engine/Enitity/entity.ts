@@ -1,1 +1,3 @@
-class Enitity {}
+class Enitity {
+    
+}

@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "./process_shaders.sh && parcel index.html",
-    "build": "./process_shaders.sh && parcel build index.html",
+    "dev": "bash process_shaders.sh && parcel index.html",
+    "build": "bash process_shaders.sh && parcel build index.html",
     "watch": "node ph-bundler.js"
   },
   "keywords": [],
