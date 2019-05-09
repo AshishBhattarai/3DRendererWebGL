@@ -22,13 +22,13 @@ export default class RenderDefaults {
     imageA.onload = () => {
       this.checkerTexture = new Texture(imageA, TextureType.DEFAULT_MAP);
     };
-    imageA.src = "res/defaults/checker.png";
+    imageA.src = "res/defaults/checker.bmp";
 
     var imageB = new Image();
     imageB.onload = () => {
       this.blackMapTexture = new Texture(imageB, TextureType.DEFAULT_MAP);
     };
-    imageB.src = "res/defaults/bMap.png";
+    imageB.src = "res/defaults/bMap.bmp";
   }
 
   private loadMesh(): void {
