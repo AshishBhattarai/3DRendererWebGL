@@ -1,6 +1,7 @@
 import ogl_globals = require("../ogl_globals");
 
-class DisplayManager {
+type onCanvasResize = (width: number, height: number) => void;
+export default class DisplayManager {
   private static instance: DisplayManager = new DisplayManager();
   private canvas: HTMLCanvasElement;
   private gl: WebGL2RenderingContext;
@@ -8,6 +9,7 @@ class DisplayManager {
 
   private lastFrameTime: number = 0;
   private lastFPSTime: number = 0;
+  private canvasResizeCallbacks: onCanvasResize[] = [];
 
   constructor() {
     if (DisplayManager.instance) {
@@ -33,6 +35,16 @@ class DisplayManager {
     ogl_globals.gl = this.gl;
     this.viewport_size = size;
     this.gl.viewport(0, 0, size[0], size[1]);
+
+    window.onresize = () => {
+      this.canvas.width = window.outerWidth;
+      this.canvas.height = window.outerHeight;
+      this.viewport_size = [this.canvas.width, this.canvas.height];
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+      this.canvasResizeCallbacks.forEach(callback => {
+        callback(this.canvas.width, this.canvas.height);
+      });
+    };
   }
 
   /**
@@ -46,6 +58,10 @@ class DisplayManager {
   public setViewportSize(size: number[]): void {
     this.viewport_size = size;
     ogl_globals.gl.viewport(0, 0, size[0], size[1]);
+  }
+
+  public onCanvasResize(callback: onCanvasResize) {
+    this.canvasResizeCallbacks.push(callback);
   }
 
   public getViewportSize(): number[] {
@@ -64,5 +80,3 @@ class DisplayManager {
     return DisplayManager.instance;
   }
 }
-
-export default DisplayManager;

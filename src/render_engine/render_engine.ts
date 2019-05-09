@@ -41,7 +41,8 @@ export default class RenderEngine {
     this.globalVSBuffer = new GlobalVSBuffer();
 
     this.sceneAmbient = 0.2;
-    var vpSize = DisplayManager.getInstance().getViewportSize();
+    var displayManager = DisplayManager.getInstance();
+    var vpSize = displayManager.getViewportSize();
     this.prespectiveProj = mat4.create();
     mat4.perspective(
       this.prespectiveProj,
@@ -50,6 +51,11 @@ export default class RenderEngine {
       0.1,
       1000.0
     );
+    displayManager.onCanvasResize((width, height) => {
+      console.log(width + " " + height);
+      mat4.perspective(this.prespectiveProj, 45.0, width / height, 0.1, 1000.0);
+      this.globalVSBuffer.setProjectionMatrix(this.prespectiveProj);
+    });
 
     this.litTextureShader.setUniformBlockBinding(
       ShaderConfig.GlobalVSBuffer,
