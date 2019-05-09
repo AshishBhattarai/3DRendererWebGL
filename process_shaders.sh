@@ -5,8 +5,7 @@
 ##
 
 STR_OUT_FILE="shader_source.ts"
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )/"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
 GLSL_DIR="$DIR/src/render_engine/shader/glsl"
 GLSL_FILES=($( cd $GLSL_DIR && ls *.vs *.fs))
 OUTPUT="$GLSL_DIR/$STR_OUT_FILE"
