@@ -9,12 +9,9 @@ import { ShaderConfig, MaterialShader } from "./shader/shader_config";
 import LitTextureShader from "./shader/lit_texture_shader";
 import Renderer from "./renderer/renderer";
 import Entity from "./Enitity/entity";
+import Shader from "./shader/shader";
 
 export default class RenderEngine {
-  private testModel: Model;
-  private testPostion: vec3;
-  private testTranform: mat4;
-
   /* Data */
   private ColorModels: Map<string, Model> = new Map<string, Model>();
   private TextureModels: Map<string, Model> = new Map<string, Model>();
@@ -33,7 +30,6 @@ export default class RenderEngine {
   private sceneAmbient: number;
 
   constructor() {
-    this.testModel = null;
     this.litColorShader = new LitColorShader();
     this.litTextureShader = new LitTextureShader();
     this.renderer = new Renderer(this.litColorShader, this.litTextureShader);
@@ -57,18 +53,17 @@ export default class RenderEngine {
       this.globalVSBuffer.setProjectionMatrix(this.prespectiveProj);
     });
 
-    this.litTextureShader.setUniformBlockBinding(
+    this.bindUniformBuffer(
       ShaderConfig.GlobalVSBuffer,
-      this.globalVSBuffer.getBindingPoint()
-    );
-    this.litTextureShader.setUniformBlockBinding(
-      ShaderConfig.GlobalFSBuffer,
-      this.globalFSBuffer.getBindingPoint()
+      this.globalVSBuffer.getBindingPoint(),
+      [this.litTextureShader, this.litColorShader]
     );
 
-    this.testPostion = vec3.fromValues(0, -0.7, -3);
-    this.testTranform = mat4.create();
-    mat4.translate(this.testTranform, this.testTranform, this.testPostion);
+    this.bindUniformBuffer(
+      ShaderConfig.GlobalFSBuffer,
+      this.globalFSBuffer.getBindingPoint(),
+      [this.litTextureShader, this.litColorShader]
+    );
 
     this.sunPosition = vec3.fromValues(0, 0, 5);
     this.sunColor = vec3.fromValues(1, 1, 1);
@@ -80,6 +75,12 @@ export default class RenderEngine {
     this.globalVSBuffer.setSunPosition(this.sunPosition);
 
     console.log(gl.getError());
+  }
+
+  private bindUniformBuffer(name: string, point: number, list: Shader[]) {
+    list.forEach(shader => {
+      shader.setUniformBlockBinding(name, point);
+    });
   }
 
   public prepare(): void {
