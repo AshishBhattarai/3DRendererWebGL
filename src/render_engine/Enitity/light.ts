@@ -4,13 +4,11 @@ class Light {
  public position:vec3;
  private rotation:vec3;
  public color:vec3; 
- public rotMat:mat4;
 
-  constructor(positionValue, rotationValue, colorValue) {
-    this.rotMat = mat4.create();
-    this.position = positionValue;
-    this.rotation = rotationValue;
-    this.color = colorValue;
+  constructor() {
+    this.position = vec3.create();
+    this.rotation = vec3.create();
+    this.color = vec3.create();
   }
 }
 
