@@ -1,14 +1,13 @@
 import DisplayManager from "./render_engine/renderer/display_manager";
 import RenderEngine from "./render_engine/render_engine";
 import Loader from "./loader/loader";
-import Model, { DefaultMesh } from "./render_engine/model/model";
+import Model from "./render_engine/model/model";
 import Texture, { TextureType } from "./render_engine/model/texture";
 import Material from "./render_engine/model/material";
 import {
-  ShaderConfig,
   MaterialShader
 } from "./render_engine/shader/shader_config";
-import { vec3 } from "gl-matrix";
+import RenderDefaults from "./render_engine/render_defaults";
 
 export default class Main {
   private static display = DisplayManager.getInstance();
@@ -16,7 +15,8 @@ export default class Main {
 
   public static main(): void {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
-    DefaultMesh.getInstance().loadMesh();
+    RenderDefaults.getInstance().loadResource();
+
     this.renderEngine = new RenderEngine();
     this.renderEngine.prepare();
 
