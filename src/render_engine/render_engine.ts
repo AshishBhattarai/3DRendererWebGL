@@ -1,40 +1,42 @@
 import { gl } from "./ogl_globals";
 import { vec3, mat4 } from "gl-matrix";
-import Mesh from "./model/mesh";
 import Model from "./model/model";
 import LitColorShader from "./shader/lit_color_shader";
 import DisplayManager from "./renderer/display_manager";
-import { LitColorRenderer } from "./renderer/lit_color_renderer";
 import GlobalVSBuffer from "./shader/global_vs_buffer";
 import GlobalFSBuffer from "./shader/global_fs_buffer";
-import { ShaderConfig } from "./shader/shader_config";
+import { ShaderConfig, MaterialShader } from "./shader/shader_config";
 import LitTextureShader from "./shader/lit_texture_shader";
-import { LitTextureRenderer } from "./renderer/lit_texture_renderer";
 import Renderer from "./renderer/renderer";
+import Entity from "./Enitity/entity";
 
 export default class RenderEngine {
   private testModel: Model;
   private testPostion: vec3;
   private testTranform: mat4;
 
+  /* Data */
+  private ColorModels: Map<string, Model> = new Map<string, Model>();
+  private TextureModels: Map<string, Model> = new Map<string, Model>();
+  private ColorModelsMap: Map<string, Entity[]> = new Map<string, Entity[]>();
+  private TextureModelsMap: Map<string, Entity[]> = new Map<string, Entity[]>();
+
+  /* Renderer */
   private litColorShader: LitColorShader;
-  private litColorRenderer: LitColorRenderer;
   private litTextureShader: LitTextureShader;
-  private litTextureRenderer: LitTextureRenderer;
+  private renderer: Renderer;
   private globalVSBuffer: GlobalVSBuffer;
   private globalFSBuffer: GlobalFSBuffer;
   private prespectiveProj: mat4;
   private sunPosition: vec3;
   private sunColor: vec3;
-
   private sceneAmbient: number;
 
   constructor() {
     this.testModel = null;
     this.litColorShader = new LitColorShader();
-    this.litColorRenderer = new LitColorRenderer(this.litColorShader);
     this.litTextureShader = new LitTextureShader();
-    this.litTextureRenderer = new LitTextureRenderer(this.litTextureShader);
+    this.renderer = new Renderer(this.litColorShader, this.litTextureShader);
     this.globalFSBuffer = new GlobalFSBuffer();
     this.globalVSBuffer = new GlobalVSBuffer();
 
@@ -80,22 +82,62 @@ export default class RenderEngine {
     gl.clearColor(0, 0, 0, 1);
   }
 
-  public renderFrame(framTime: number): void {
+  public renderFrame(frameTime: number): void {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    mat4.identity(this.testTranform);
-    mat4.translate(this.testTranform, this.testTranform, this.testPostion);
-    mat4.rotateY(
-      this.testTranform,
-      this.testTranform,
-      (framTime / 1000) * 1.5 * 0.5
-    );
+    // Render Color Models
+    this.ColorModels.forEach((model, name) => {
+      let list = this.TextureModelsMap.get(name);
+      this.renderer.renderLitColor(model, list);
+      list.splice(0, list.length);
+    });
 
-    if (this.testModel)
-      this.litTextureRenderer.render(this.testTranform, this.testModel);
+    // Render Texture Models
+    this.TextureModels.forEach((model, name) => {
+      let list = this.TextureModelsMap.get(name);
+      this.renderer.renderLitTexture(model, list);
+      list.splice(0, list.length);
+    });
   }
 
-  public seRenderMesh(model: Model) {
-    this.testModel = model;
+  public addModel(model: Model, name: string) {
+    switch (model.material.materialShader) {
+      case MaterialShader.LIT_MATERIAL_COLOR_SHADER:
+        this.ColorModels.set(name, model);
+        this.ColorModelsMap.set(name, []);
+        break;
+
+      case MaterialShader.LIT_MATERIAL_TEXTURE_SHADER:
+        this.TextureModels.set(name, model);
+        this.TextureModelsMap.set(name, []);
+        break;
+    }
+  }
+
+  /* Removes the model from the list and releases it */
+  public removeModel(name: string) {
+    var model: Model;
+    if (this.ColorModels.has(name)) {
+      model = this.ColorModels.get(name);
+      this.ColorModels.delete(name);
+      this.TextureModelsMap.delete(name);
+      model.release();
+    } else if (this.TextureModels.has(name)) {
+      model = this.TextureModels.get(name);
+      this.ColorModels.delete(name);
+      this.TextureModelsMap.delete(name);
+      model.release();
+    }
+  }
+
+  public processEntities(entities: Entity[]) {
+    for (let entity of entities) {
+      let name = entity.modelName;
+      if (this.ColorModels.has(name)) {
+        this.ColorModelsMap.get(name).push(entity);
+      } else if (this.TextureModels.has(name)) {
+        this.TextureModelsMap.get(name).push(entity);
+      }
+    }
   }
 }

@@ -1,11 +1,10 @@
 import { vec3, mat4 } from "gl-matrix";
 
-export default class Enitity {
+export default class Entity {
   public position: vec3;
   public rotation: vec3;
   public scale: vec3;
   public modelName: string;
-  private transformation: mat4;
 
   constructor(
     modelName: string,
@@ -17,17 +16,16 @@ export default class Enitity {
     this.position = position;
     this.rotation = rotation;
     this.scale = scale;
-
-    this.transformation = mat4.create();
-    mat4.identity(this.transformation);
   }
 
   public getTransMatrix() {
-    mat4.translate(this.transformation, this.transformation, this.position);
-    mat4.rotateY(this.transformation, this.transformation, this.rotation[1]);
-    mat4.rotateX(this.transformation, this.transformation, this.rotation[0]);
-    mat4.rotateZ(this.transformation, this.transformation, this.rotation[2]);
-    mat4.scale(this.transformation, this.transformation, this.scale);
-    return this.transformation;
+    var transformation = mat4.create();
+    mat4.identity(transformation);
+    mat4.translate(transformation, transformation, this.position);
+    mat4.rotateY(transformation, transformation, this.rotation[1]);
+    mat4.rotateX(transformation, transformation, this.rotation[0]);
+    mat4.rotateZ(transformation, transformation, this.rotation[2]);
+    mat4.scale(transformation, transformation, this.scale);
+    return transformation;
   }
 }

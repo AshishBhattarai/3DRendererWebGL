@@ -68,8 +68,11 @@ export default class Mesh {
     this.uvBuffer = gl.createBuffer();
   }
 
-  public drawMesh(): void {
+  public bindMesh(): void {
     gl.bindVertexArray(this.vao);
+  }
+
+  public drawMesh(): void {
     gl.drawElements(gl.TRIANGLES, this.index_cnt, gl.UNSIGNED_INT, 0);
   }
 

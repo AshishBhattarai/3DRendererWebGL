@@ -1,10 +1,36 @@
-import "../shader/lit_color_shader";
-import { mat4 } from "gl-matrix";
+import LitColorShader from "../shader/lit_color_shader";
 import Model from "../model/model";
-import Shader from "../shader/shader";
+import LitTextureShader from "../shader/lit_texture_shader";
+import Entity from "../Enitity/entity";
 
-export default abstract class Renderer {
-  abstract shader: Shader;
+export default class Renderer {
+  litColorShader: LitColorShader;
+  litTextureShader: LitTextureShader;
 
-  abstract render(transformation: mat4, model: Model): void;
+  constructor(
+    litColorShader: LitColorShader,
+    litTextureShader: LitTextureShader
+  ) {
+    this.litColorShader = litColorShader;
+    this.litTextureShader = litTextureShader;
+  }
+
+  public renderLitTexture(model: Model, entites: Entity[]) {
+    model.mesh.bindMesh();
+    this.litTextureShader.start();
+    this.litTextureShader.loadMaterial(model.material);
+    for (let entity of entites) {
+      this.litTextureShader.loadTranformation(entity.getTransMatrix());
+      model.mesh.drawMesh();
+    }
+  }
+
+  public renderLitColor(model: Model, entites: Entity[]) {
+    model.mesh.bindMesh();
+    this.litColorShader.loadMaterial(model.material);
+    for (let entity of entites) {
+      this.litColorShader.loadTranformation(entity.getTransMatrix());
+      model.mesh.drawMesh();
+    }
+  }
 }
