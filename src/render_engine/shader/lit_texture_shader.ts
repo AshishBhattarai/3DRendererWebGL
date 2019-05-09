@@ -27,10 +27,10 @@ export default class LitTextureShader extends Shader {
       this.getUniformLocation("material.diffuse"),
       LitTextureShader.DIFFUSE_UNIT
     );
-    // gl.uniform1f(
-    //   this.getUniformLocation("material.specular"),
-    //   LitTextureShader.SPECULAR_UNIT
-    // );
+    gl.uniform1i(
+      this.getUniformLocation("material.specular"),
+      LitTextureShader.SPECULAR_UNIT
+    );
     // gl.uniform1i(
     // 	this.getUniformLocation("material.emission"),
     // 	LitTextureShader.EMISSION_UNIT
@@ -46,8 +46,8 @@ export default class LitTextureShader extends Shader {
   public loadMaterial(material: Material) {
     gl.activeTexture(gl.TEXTURE0);
     material.diffuseMap.bind();
-    // gl.activeTexture(gl.TEXTURE1);
-    // material.specularMap.bind();
+    gl.activeTexture(gl.TEXTURE1);
+    material.specularMap.bind();
     // gl.activeTexture(gl.TEXTURE2);
     // material.emissionMap.bind();
     gl.uniform1f(this.shininessLoc, material.shininess);

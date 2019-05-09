@@ -3,7 +3,8 @@ import { gl } from "../ogl_globals";
 export enum TextureType {
   DIFFUSE_MAP = 0,
   SPECULAR_MAP,
-  EMISSION_MAP
+  EMISSION_MAP,
+  DEFAULT_MAP
 }
 
 export default class Texture {
@@ -40,6 +41,7 @@ export default class Texture {
   }
 
   public release() {
+    if (this.type == TextureType.DEFAULT_MAP) return;
     gl.deleteTexture(this.id);
     this.id = null;
   }

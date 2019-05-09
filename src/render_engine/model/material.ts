@@ -1,6 +1,7 @@
 import { vec3 } from "gl-matrix";
 import { MaterialShader } from "../shader/shader_config";
 import Texture from "./texture";
+import RenderDefaults from "../render_defaults";
 
 class MaterialDefault {
   public static readonly colorW = vec3.fromValues(1, 1, 1);
@@ -44,14 +45,18 @@ export default class Material {
     this.materialShader = iMaterial.materialShader || MaterialDefault.shader;
     this.shininess = iMaterial.shininess || MaterialDefault.shininess;
 
+    var renderDefault = RenderDefaults.getInstance();
+
     switch (+this.materialShader) {
       case MaterialShader.LIT_MATERIAL_COLOR_SHADER:
         this.diffuse = iMaterial.diffuse || MaterialDefault.colorW;
         this.specular = iMaterial.specular || MaterialDefault.colorB;
         break;
       case MaterialShader.LIT_MATERIAL_TEXTURE_SHADER:
-        this.diffuseMap = iMaterial.diffuseMap;
-        // this.specularMap = iMaterial.specularMap || iMaterial.diffuseMap;
+        this.diffuseMap =
+          iMaterial.diffuseMap || renderDefault.getCheckerTexture();
+        this.specularMap =
+          iMaterial.specularMap || renderDefault.getBlackTexture();
         break;
     }
   }

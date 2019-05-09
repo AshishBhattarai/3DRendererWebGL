@@ -8,6 +8,11 @@ export interface IMesh {
   uvData?: Float32Array;
 }
 
+export enum ModelType {
+  NONE,
+  DEFAULT
+}
+
 export default class Mesh {
   private index_cnt: number = 0;
 
@@ -17,8 +22,11 @@ export default class Mesh {
   private indexBuffer: WebGLBuffer;
   private uvBuffer: WebGLBuffer;
 
-  constructor(iMesh: IMesh) {
+  private type: ModelType;
+
+  constructor(iMesh: IMesh, type: ModelType = ModelType.NONE) {
     this.index_cnt = iMesh.indexData.length;
+    this.type = type;
     this.createBuffer();
 
     gl.bindVertexArray(this.vao);
@@ -65,7 +73,9 @@ export default class Mesh {
     gl.drawElements(gl.TRIANGLES, this.index_cnt, gl.UNSIGNED_INT, 0);
   }
 
-  public clearBuffer(): void {
+  public release(): void {
+    if ((this.type = ModelType.DEFAULT)) return;
+
     gl.deleteBuffer(this.vertexBuffer);
     gl.deleteBuffer(this.normalBuffer);
     gl.deleteBuffer(this.indexBuffer);
