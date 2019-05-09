@@ -8,6 +8,7 @@ import {
   ShaderConfig,
   MaterialShader
 } from "./render_engine/shader/shader_config";
+import { vec3 } from "gl-matrix";
 
 export default class Main {
   private static display = DisplayManager.getInstance();

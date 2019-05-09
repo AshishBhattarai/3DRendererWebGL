@@ -1,10 +1,12 @@
 import { vec3, mat4 } from "gl-matrix";
+import Light from "./light";
 
 class Enitity {
   public position: vec3;
   public rotation: vec3;
   public scale: vec3;
   public transformation: mat4;
+  
 
   constructor() {
     this.position = vec3.create();
@@ -21,6 +23,12 @@ class Enitity {
     mat4.rotateX(this.transformation, this.transformation, this.rotation[1]);
     mat4.rotateZ(this.transformation, this.transformation, this.rotation[2]);
     mat4.scale(this.transformation, this.transformation, this.scale);
+    return this.transformation;
   }
+
+  public applyRotation() {
+    
+  }
+
 }
 export default Enitity;
