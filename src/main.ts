@@ -12,7 +12,6 @@ import { vec3 } from "gl-matrix";
 export default class Main {
   private static display = DisplayManager.getInstance();
   private static renderEngine: RenderEngine;
-  private static loaderComplete: boolean = false;
 
   private static renderLoopCall: (frameTime: number) => void;
 
@@ -23,42 +22,42 @@ export default class Main {
     this.renderEngine = new RenderEngine();
     this.renderEngine.prepare();
 
-    let loader = new Loader((model: Model, name: string) => {
-      let image = new Image();
-      image.onload = () => {
-        let mat = new Material({
-          diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
-          materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
-        });
-        model.material = mat;
-        this.renderEngine.addModel(model, name);
-        this.loaderComplete = true;
-      };
-      image.src = "res/texture.png";
+    let loader = new Loader((model: Model, name: string, loadedCnt: number) => {
+      if (name == "goat") {
+        let image = new Image();
+        image.onload = () => {
+          let mat = new Material({
+            diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat;
+          this.renderEngine.addModel(model, name);
+        };
+        image.src = "res/texture.png";
+      }
+      if (loadedCnt == 0) {
+        /* loading completet */
+        this.animationLoop(0);
+      }
     });
 
-    loader.loadModel("res/goat.obj");
+    loader.loadModels(["res/goat.obj"]);
 
-    var goatEntity = new Entity("goat");
     var entites: Entity[] = [];
-    goatEntity.position.set([0, -0.7, -3]);
-
     for (let i = 0; i < 50; ++i) {
       for (let j = 0; j < 50; ++j) {
-        entites.push(new Entity("goat", vec3.fromValues(i+j - 40, i - j, -20)));
+        entites.push(
+          new Entity("goat", vec3.fromValues(i + j - 40, i - j, -20))
+        );
       }
     }
 
     this.renderLoopCall = (frameTime: number) => {
-      if (this.loaderComplete) {
-        entites.forEach((entity, index) => {
-          entity.rotation[1] = (frameTime / 1000) * 1.5 * 0.5;
-        });
-        this.renderEngine.processEntities(entites);
-      }
+      entites.forEach((entity, index) => {
+        entity.rotation[1] = (frameTime / 1000) * 1.5 * 0.5;
+      });
+      this.renderEngine.processEntities(entites);
     };
-
-    this.animationLoop(0);
   }
 
   private static animationLoop(frameTime: number): void {

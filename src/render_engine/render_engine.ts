@@ -48,7 +48,6 @@ export default class RenderEngine {
       1000.0
     );
     displayManager.onCanvasResize((width, height) => {
-      console.log(width + " " + height);
       mat4.perspective(this.prespectiveProj, 45.0, width / height, 0.1, 1000.0);
       this.globalVSBuffer.setProjectionMatrix(this.prespectiveProj);
     });

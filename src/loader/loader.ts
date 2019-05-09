@@ -1,14 +1,19 @@
 import Model from "../render_engine/model/model";
 import ObjParser from "./obj_parser";
 
-type ModelLoadedCallback = (mode: Model, name: String) => void;
+type ModelLoadedCallback = (
+  mode: Model,
+  name: String,
+  loadCounter: number
+) => void;
 type ParserCallaback = (data: any) => void;
 
 export default class Loader {
-  private modelCallback: ModelLoadedCallback;
+  private modelLoadedCallback: ModelLoadedCallback;
+  private loadCounter = 0;
 
-  constructor(modelCallback: ModelLoadedCallback) {
-    this.modelCallback = modelCallback;
+  constructor(modelLoadedCallback: ModelLoadedCallback) {
+    this.modelLoadedCallback = modelLoadedCallback;
   }
 
   /**
@@ -50,24 +55,27 @@ export default class Loader {
   }
 
   private parseObjModel(data: string, name: string) {
+    --this.loadCounter;
     var obj = new ObjParser(data);
     var mesh = obj.getMeshes()[0];
-    var model = new Model({ mesh: mesh });
-    this.modelCallback(model, name);
+    var model = new Model({ mesh: mesh, name: name });
+    this.modelLoadedCallback(model, name, this.loadCounter);
   }
 
-  public loadModel(path: string): string {
-    let nameExt = this.extractNameExt(path);
-    switch (nameExt[1]) {
-      case "obj":
-        this.loadData(path, "text", data =>
-          this.parseObjModel(data, nameExt[0])
-        );
-        break;
-      default:
-        console.log("Unsupported model type ", nameExt[1]);
-        break;
+  public loadModels(paths: string[]) {
+    this.loadCounter = paths.length;
+    for (let path of paths) {
+      let nameExt = this.extractNameExt(path);
+      switch (nameExt[1]) {
+        case "obj":
+          this.loadData(path, "text", data =>
+            this.parseObjModel(data, nameExt[0])
+          );
+          break;
+        default:
+          console.log("Unsupported model type ", nameExt[1]);
+          break;
+      }
     }
-    return nameExt[0];
   }
 }
