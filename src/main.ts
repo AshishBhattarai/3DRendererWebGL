@@ -8,10 +8,12 @@ import { MaterialShader } from "./render_engine/shader/shader_config";
 import RenderDefaults from "./render_engine/render_defaults";
 import Entity from "./render_engine/Enitity/entity";
 import { vec3 } from "gl-matrix";
+import SimLoop from "./sim_loop";
 
 export default class Main {
   private static display = DisplayManager.getInstance();
   private static renderEngine: RenderEngine;
+  private static simLoop: SimLoop;
 
   private static renderLoopCall: (frameTime: number) => void;
 
@@ -20,8 +22,9 @@ export default class Main {
     RenderDefaults.getInstance().loadResource();
 
     this.renderEngine = new RenderEngine();
-    this.renderEngine.prepare();
+    this.simLoop = new SimLoop(this.renderEngine);
 
+    /* Load resource */
     let loader = new Loader((model: Model, name: string, loadedCnt: number) => {
       if (name == "goat") {
         let image = new Image();
@@ -42,26 +45,10 @@ export default class Main {
     });
 
     loader.loadModels(["res/goat.obj"]);
-
-    var entites: Entity[] = [];
-    for (let i = 0; i < 50; ++i) {
-      for (let j = 0; j < 50; ++j) {
-        entites.push(
-          new Entity("goat", vec3.fromValues(i + j - 40, i - j, -20))
-        );
-      }
-    }
-
-    this.renderLoopCall = (frameTime: number) => {
-      entites.forEach((entity, index) => {
-        entity.rotation[1] = (frameTime / 1000) * 1.5 * 0.5;
-      });
-      this.renderEngine.processEntities(entites);
-    };
   }
 
   private static animationLoop(frameTime: number): void {
-    Main.renderLoopCall(frameTime);
+    Main.simLoop.run(frameTime);
     Main.renderEngine.renderFrame(frameTime);
     window.requestAnimationFrame(Main.animationLoop);
   }
