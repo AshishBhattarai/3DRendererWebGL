@@ -9,6 +9,7 @@ export default class DisplayManager {
 
   private lastFrameTime: number = 0;
   private lastFPSTime: number = 0;
+  private delta: number = 0;
   private canvasResizeCallbacks: onCanvasResize[] = [];
 
   constructor() {
@@ -18,6 +19,11 @@ export default class DisplayManager {
         "Error: Instatiation failed: use DisplayManager.getInstance"
       );
     }
+  }
+
+  public updateTime(time: number) {
+    this.delta = (time - this.lastFrameTime) / 1000.0;
+    this.lastFrameTime = time;
   }
 
   /**
@@ -70,6 +76,10 @@ export default class DisplayManager {
 
   public getCanvasSize(): number[] {
     return [this.canvas.width, this.canvas.height];
+  }
+
+  public getDelta(): number {
+    return this.delta;
   }
 
   public getGlContext(): WebGL2RenderingContext {

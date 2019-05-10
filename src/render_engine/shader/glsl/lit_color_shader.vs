@@ -10,14 +10,14 @@ uniform mat4 tranformationMat;
 
 layout(std140)uniform GlobalVSData{
 	mat4 projectionMat;
-	// mat4 viewMat;
+	mat4 viewMat;
 	vec3 cameraPosition;
 	vec3 sunPosition;
 };
 
 void main(void){
 	vec4 worldposition=tranformationMat*vec4(aPosition,1.f);
-	gl_Position=projectionMat*worldposition;
+	gl_Position=projectionMat*viewMat*worldposition;
 	normal=mat3(tranformationMat)*aNormal;
 	toSun=sunPosition-worldposition.xyz;
 	toCamera=cameraPosition-worldposition.xyz;

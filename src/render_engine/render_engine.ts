@@ -10,6 +10,7 @@ import LitTextureShader from "./shader/lit_texture_shader";
 import Renderer from "./renderer/renderer";
 import Entity from "./Enitity/entity";
 import Shader from "./shader/shader";
+import Camera from "./Enitity/camera";
 
 export default class RenderEngine {
   /* Data */
@@ -69,7 +70,6 @@ export default class RenderEngine {
 
     this.globalFSBuffer.setSceneAmbient(this.sceneAmbient);
     this.globalFSBuffer.setSunColor(this.sunColor);
-    this.globalVSBuffer.setCameraPosition(vec3.fromValues(0, 0, 0));
     this.globalVSBuffer.setProjectionMatrix(this.prespectiveProj);
     this.globalVSBuffer.setSunPosition(this.sunPosition);
 
@@ -88,12 +88,14 @@ export default class RenderEngine {
     gl.clearColor(0, 0, 0, 1);
   }
 
-  public renderFrame(frameTime: number): void {
+  public renderFrame(frameTime: number, camera: Camera): void {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    this.globalVSBuffer.setCameraPosition(camera.getPosition());
+    this.globalVSBuffer.setViewMatrix(camera.getViewMatrix());
 
     // Render Color Models
     this.ColorModels.forEach((model, name) => {
-      let list = this.TextureModelsMap.get(name);
+      let list = this.ColorModelsMap.get(name);
       this.renderer.renderLitColor(model, list);
       list.splice(0, list.length);
     });

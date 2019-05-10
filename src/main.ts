@@ -6,8 +6,6 @@ import Texture, { TextureType } from "./render_engine/model/texture";
 import Material from "./render_engine/model/material";
 import { MaterialShader } from "./render_engine/shader/shader_config";
 import RenderDefaults from "./render_engine/render_defaults";
-import Entity from "./render_engine/Enitity/entity";
-import { vec3 } from "gl-matrix";
 import SimLoop from "./sim_loop";
 
 export default class Main {
@@ -39,7 +37,7 @@ export default class Main {
         image.src = "res/texture.png";
       }
       if (loadedCnt == 0) {
-        /* loading completet */
+        /* loading complete */
         this.animationLoop(0);
       }
     });
@@ -48,8 +46,8 @@ export default class Main {
   }
 
   private static animationLoop(frameTime: number): void {
+    Main.display.updateTime(frameTime);
     Main.simLoop.run(frameTime);
-    Main.renderEngine.renderFrame(frameTime);
     window.requestAnimationFrame(Main.animationLoop);
   }
 }
