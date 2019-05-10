@@ -40,6 +40,12 @@ export default class Texture {
     gl.bindTexture(gl.TEXTURE_2D, null);
   }
 
+  public setTextureWrap(wrap: GLenum) {
+    this.bind();
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
+  }
+
   public release() {
     if (this.type == TextureType.DEFAULT_MAP) return;
     gl.deleteTexture(this.id);

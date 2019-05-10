@@ -4,10 +4,14 @@ import Mesh, { ModelType } from "./model/mesh";
 // Default textures / models for renderer
 
 export default class RenderDefaults {
+  private static readonly NUM_RES = 3;
   private static instance = new RenderDefaults();
   private checkerTexture: Texture;
   private blackMapTexture: Texture;
   private mesh: Mesh;
+  private loadedCount: number = RenderDefaults.NUM_RES;
+
+  private loadCompleteCallback: () => void;
 
   constructor() {
     if (RenderDefaults.instance) {
@@ -17,16 +21,25 @@ export default class RenderDefaults {
     }
   }
 
+  private resLoadComplete() {
+    --this.loadedCount;
+    if (this.loadedCount == 0) {
+      this.loadCompleteCallback();
+    }
+  }
+
   private loadTexture() {
     var imageA = new Image();
     imageA.onload = () => {
       this.checkerTexture = new Texture(imageA, TextureType.DEFAULT_MAP);
+      this.resLoadComplete();
     };
     imageA.src = "res/defaults/checker.bmp";
 
     var imageB = new Image();
     imageB.onload = () => {
       this.blackMapTexture = new Texture(imageB, TextureType.DEFAULT_MAP);
+      this.resLoadComplete();
     };
     imageB.src = "res/defaults/bMap.bmp";
   }
@@ -245,6 +258,7 @@ export default class RenderDefaults {
       },
       ModelType.DEFAULT
     );
+    this.resLoadComplete();
   }
 
   public loadResource() {
@@ -266,5 +280,9 @@ export default class RenderDefaults {
 
   public getMesh(): Mesh {
     return this.mesh;
+  }
+
+  public setLoadCompleteCallback(loadCompleteCallback: () => void) {
+    this.loadCompleteCallback = loadCompleteCallback;
   }
 }

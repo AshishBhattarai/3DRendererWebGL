@@ -10,7 +10,8 @@ export interface IMesh {
 
 export enum ModelType {
   NONE,
-  DEFAULT
+  DEFAULT,
+  TERRAIN
 }
 
 export default class Mesh {
@@ -23,10 +24,13 @@ export default class Mesh {
   private uvBuffer: WebGLBuffer;
 
   private type: ModelType;
+  private drawMode: GLenum;
 
   constructor(iMesh: IMesh, type: ModelType = ModelType.NONE) {
     this.index_cnt = iMesh.indexData.length;
     this.type = type;
+    this.drawMode =
+      this.type == ModelType.TERRAIN ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
     this.createBuffer();
 
     gl.bindVertexArray(this.vao);
@@ -73,7 +77,7 @@ export default class Mesh {
   }
 
   public drawMesh(): void {
-    gl.drawElements(gl.TRIANGLES, this.index_cnt, gl.UNSIGNED_INT, 0);
+    gl.drawElements(this.drawMode, this.index_cnt, gl.UNSIGNED_INT, 0);
   }
 
   public release(): void {

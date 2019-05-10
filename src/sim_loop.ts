@@ -1,18 +1,20 @@
 import RenderEngine from "./render_engine/render_engine";
 import Entity from "./render_engine/Enitity/entity";
-import { vec3 } from "gl-matrix";
+import { vec3, vec2 } from "gl-matrix";
 import Camera, { Movement } from "./render_engine/Enitity/camera";
 import DisplayManager from "./render_engine/renderer/display_manager";
+import Terrain from "./render_engine/terrain/terrain";
 
 export default class SimLoop {
   private renderEngine: RenderEngine;
   private entites: Entity[] = [];
+  private terrains: Terrain[] = [];
   private camera: Camera;
 
   constructor(renderEngine: RenderEngine) {
     this.renderEngine = renderEngine;
     this.renderEngine.prepare();
-    this.camera = new Camera();
+    this.camera = new Camera(vec3.fromValues(0, 10, 0));
     let displayManager = DisplayManager.getInstance();
 
     window.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -41,6 +43,9 @@ export default class SimLoop {
         );
       }
     }
+
+    // Terrain
+    this.terrains.push(new Terrain(vec2.fromValues(1, 1)));
   }
 
   public run(frameTime: number) {
@@ -49,6 +54,7 @@ export default class SimLoop {
       entity.rotation[1] = (frameTime / 1000) * 1.5 * 0.5;
     });
     this.renderEngine.processEntities(this.entites);
+    this.renderEngine.processTerrains(this.terrains);
 
     /* Render */
     this.renderEngine.renderFrame(frameTime, this.camera);

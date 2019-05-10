@@ -2,6 +2,7 @@ import LitColorShader from "../shader/lit_color_shader";
 import Model from "../model/model";
 import LitTextureShader from "../shader/lit_texture_shader";
 import Entity from "../Enitity/entity";
+import Terrain from "../terrain/terrain";
 
 export default class Renderer {
   litColorShader: LitColorShader;
@@ -31,6 +32,17 @@ export default class Renderer {
     for (let entity of entites) {
       this.litColorShader.loadTranformation(entity.getTransMatrix());
       model.mesh.drawMesh();
+    }
+  }
+
+  public renderTerrain(terrains: Terrain[]) {
+    this.litTextureShader.start();
+    for (let terrain of terrains) {
+      let mesh = terrain.getMesh();
+      this.litTextureShader.loadMaterial(terrain.getMaterial());
+      this.litTextureShader.loadTranformation(terrain.getTransMat());
+      mesh.bindMesh();
+      mesh.drawMesh();
     }
   }
 }

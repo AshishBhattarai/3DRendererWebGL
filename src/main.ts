@@ -13,36 +13,36 @@ export default class Main {
   private static renderEngine: RenderEngine;
   private static simLoop: SimLoop;
 
-  private static renderLoopCall: (frameTime: number) => void;
-
   public static main(): void {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
-    RenderDefaults.getInstance().loadResource();
-
     this.renderEngine = new RenderEngine();
-    this.simLoop = new SimLoop(this.renderEngine);
+    var renderDefaults = RenderDefaults.getInstance();
+    var loader = new Loader(Main.modelLoaded);
 
-    /* Load resource */
-    let loader = new Loader((model: Model, name: string, loadedCnt: number) => {
-      if (name == "goat") {
-        let image = new Image();
-        image.onload = () => {
-          let mat = new Material({
-            diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
-            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
-          });
-          model.material = mat;
-          this.renderEngine.addModel(model, name);
-        };
-        image.src = "res/texture.png";
-      }
-      if (loadedCnt == 0) {
-        /* loading complete */
-        this.animationLoop(0);
-      }
+    renderDefaults.setLoadCompleteCallback(() => {
+      /* Default Resources Loaded */
+      this.simLoop = new SimLoop(this.renderEngine);
+      loader.loadModels(["res/goat.obj"]);
     });
+    RenderDefaults.getInstance().loadResource();
+  }
 
-    loader.loadModels(["res/goat.obj"]);
+  private static modelLoaded(model: Model, name: string, loadedCnt: number) {
+    if (name == "goat") {
+      let image = new Image();
+      image.onload = () => {
+        let mat = new Material({
+          diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
+          materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+        });
+        model.material = mat;
+        Main.renderEngine.addModel(model, name);
+      };
+      image.src = "res/texture.png";
+    }
+    if (loadedCnt == 0) {
+      Main.animationLoop(0);
+    }
   }
 
   private static animationLoop(frameTime: number): void {

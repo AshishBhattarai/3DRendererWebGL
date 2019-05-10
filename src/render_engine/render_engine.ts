@@ -11,6 +11,7 @@ import Renderer from "./renderer/renderer";
 import Entity from "./Enitity/entity";
 import Shader from "./shader/shader";
 import Camera from "./Enitity/camera";
+import Terrain from "./terrain/terrain";
 
 export default class RenderEngine {
   /* Data */
@@ -18,6 +19,7 @@ export default class RenderEngine {
   private TextureModels: Map<string, Model> = new Map<string, Model>();
   private ColorModelsMap: Map<string, Entity[]> = new Map<string, Entity[]>();
   private TextureModelsMap: Map<string, Entity[]> = new Map<string, Entity[]>();
+  private terrians: Terrain[];
 
   /* Renderer */
   private litColorShader: LitColorShader;
@@ -106,6 +108,9 @@ export default class RenderEngine {
       this.renderer.renderLitTexture(model, list);
       list.splice(0, list.length);
     });
+
+    // Render Terrains
+    this.renderer.renderTerrain(this.terrians);
   }
 
   public addModel(model: Model, name: string) {
@@ -147,5 +152,9 @@ export default class RenderEngine {
         this.TextureModelsMap.get(name).push(entity);
       }
     }
+  }
+
+  public processTerrains(terrains: Terrain[]) {
+    this.terrians = terrains;
   }
 }
