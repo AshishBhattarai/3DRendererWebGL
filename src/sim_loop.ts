@@ -37,7 +37,8 @@ export default class SimLoop {
     }
 
     // Terrain
-    this.terrains.push(new Terrain(vec2.fromValues(1, 1)));
+    this.terrains.push(new Terrain(vec2.fromValues(0, 0)));
+    this.terrains[0].position[0] = 100;
   }
 
   private setActionKeys() {

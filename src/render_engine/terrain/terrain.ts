@@ -1,28 +1,32 @@
 import { vec2, mat4, vec3 } from "gl-matrix";
 import Mesh, { ModelType } from "../model/mesh";
 import Material from "../model/material";
-import LitTextureShader from "../shader/lit_texture_shader";
 import { MaterialShader } from "../shader/shader_config";
+import { gl } from "../ogl_globals";
 
 export default class Terrain {
   static readonly VERTEX_CNT = 20;
   static readonly SIZE = 100;
+  static readonly TILING_FACTOR = 100;
 
-  private position: vec2;
+  public position: vec2;
   private size: number;
   private vertexCount: number;
+  private tilingFactor: number;
 
   private mesh: Mesh;
-  private material: Material;
+  public material: Material;
 
   constructor(
     gridPos: vec2,
     size: number = Terrain.SIZE,
-    vertexCount: number = Terrain.VERTEX_CNT
+    vertexCount: number = Terrain.VERTEX_CNT,
+    tilingFactor: number = Terrain.TILING_FACTOR
   ) {
     this.position = vec2.create();
     this.vertexCount = vertexCount;
     this.size = size;
+    this.tilingFactor = tilingFactor;
     vec2.scale(this.position, gridPos, this.size);
 
     this.generateTerrain();
@@ -30,6 +34,7 @@ export default class Terrain {
     this.material = new Material({
       materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
     });
+    this.material.diffuseMap.setTextureWrap(gl.REPEAT);
   }
 
   private generateTerrain() {
@@ -41,14 +46,14 @@ export default class Terrain {
     for (let z = 0; z < this.vertexCount; ++z) {
       for (let x = 0; x < this.vertexCount; ++x) {
         // position
-        vertices.push((x / (this.vertexCount - 1)) * this.size);
+        vertices.push(-(x / (this.vertexCount - 1)) * this.size);
         vertices.push(0.0);
-        vertices.push((z / (this.vertexCount - 1)) * this.size);
+        vertices.push(-(z / (this.vertexCount - 1)) * this.size);
         // normal
         normals.push(0.0, 1.0, 0.0);
         // texture coords
-        texCoords.push(x / (this.vertexCount - 1));
-        texCoords.push(z / (this.vertexCount - 1));
+        texCoords.push((x / (this.vertexCount - 1)) * this.tilingFactor);
+        texCoords.push((z / (this.vertexCount - 1)) * this.tilingFactor);
         // indices
         if (z < this.vertexCount - 1) {
           indices.push(z * this.vertexCount + x);
