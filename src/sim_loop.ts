@@ -18,6 +18,14 @@ export default class SimLoop {
     this.renderEngine = renderEngine;
     this.renderEngine.prepare();
     this.camera = new Camera(vec3.fromValues(0, 10, 0));
+    this.setActionKeys();
+    window.onmousemove = (e: MouseEvent) => {
+      this.camera.processMouseMovment(
+        e.movementY,
+        e.movementX,
+        this.displayManager.getDelta()
+      );
+    };
 
     // Entites dummy data
     for (let i = 0; i < 20; ++i) {
@@ -30,6 +38,14 @@ export default class SimLoop {
 
     // Terrain
     this.terrains.push(new Terrain(vec2.fromValues(1, 1)));
+  }
+
+  private setActionKeys() {
+    document.onkeydown = (e: KeyboardEvent) => {
+      if (e.code == "KeyR") {
+        this.displayManager.pointerLock();
+      }
+    };
   }
 
   private processInput() {

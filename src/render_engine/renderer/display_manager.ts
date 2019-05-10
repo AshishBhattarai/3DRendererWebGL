@@ -86,6 +86,10 @@ export default class DisplayManager {
     return this.gl;
   }
 
+  public pointerLock() {
+    this.canvas.requestPointerLock();
+  }
+
   public static getInstance(): DisplayManager {
     return DisplayManager.instance;
   }

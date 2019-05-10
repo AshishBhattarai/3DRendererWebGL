@@ -1,4 +1,4 @@
-import { quat, mat4, vec3 } from "gl-matrix";
+import { quat, mat4, vec3, glMatrix } from "gl-matrix";
 
 export enum Movement {
   FORWARD = 0,
@@ -58,16 +58,20 @@ export default class Camera {
   }
 
   private updateCameraDirection() {
-    // quat.setAxisAngle(this.orientation, [1, 0, 0], this.rotation[0]);
-    // quat.mul(
-    //   this.orientation,
-    //   this.orientation,
-    //   quat.setAxisAngle(quat.create(), [0, 1, 0], this.rotation[1])
-    // );
-    quat.fromEuler(this.orientation, this.rotation[0], this.rotation[1], 0.0);
-
-    // this.viewMat = mat4.rotateX(this.viewMat, this.viewMat, this.rotation[0]);
-    // this.viewMat = mat4.rotateY(this.viewMat, this.viewMat, this.rotation[1]);
+    quat.setAxisAngle(
+      this.orientation,
+      [1, 0, 0],
+      glMatrix.toRadian(this.rotation[0])
+    );
+    quat.mul(
+      this.orientation,
+      this.orientation,
+      quat.setAxisAngle(
+        quat.create(),
+        [0, 1, 0],
+        glMatrix.toRadian(this.rotation[1])
+      )
+    );
 
     this.calculateViewMatrix();
 
@@ -111,6 +115,22 @@ export default class Camera {
     vec3.scale(direction, direction, speed);
     vec3.add(this.position, this.position, direction);
     this.calculateViewMatrix();
+  }
+
+  public processMouseMovment(xoffset: number, yoffset: number, dt: number) {
+    var speed = this.mouseSensitivity * dt;
+
+    this.rotation[0] += xoffset * speed;
+    this.rotation[1] += yoffset * speed;
+    console.log(this.rotation[0]);
+
+    if (this.rotation[0] > 89.0) {
+      this.rotation[0] = 89.0;
+    } else if (this.rotation[0] < -89.0) {
+      this.rotation[0] = -89.0;
+    }
+
+    this.updateCameraDirection();
   }
 
   public getPosition(): vec3 {
