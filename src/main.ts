@@ -22,7 +22,7 @@ export default class Main {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
       this.simLoop = new SimLoop(this.renderEngine);
-      loader.loadModels(["res/goat.obj"]);
+      loader.loadModels(["res/goat.obj", "res/sphere.obj"]);
     });
     RenderDefaults.getInstance().loadResource();
   }
@@ -39,6 +39,9 @@ export default class Main {
         Main.renderEngine.addModel(model, name);
       };
       image.src = "res/texture.png";
+    }
+    if (name == "sphere") {
+      Main.renderEngine.addModel(model, name);
     }
     if (loadedCnt == 0) {
       Main.animationLoop(0);
