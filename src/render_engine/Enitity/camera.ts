@@ -136,6 +136,14 @@ export default class Camera {
     return this.position;
   }
 
+  public getFront(): vec3 {
+    return this.front;
+  }
+
+  public getRight(): vec3 {
+    return this.right;
+  }
+
   public getViewMatrix(): mat4 {
     return this.viewMat;
   }

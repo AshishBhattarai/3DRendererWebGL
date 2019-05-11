@@ -67,12 +67,17 @@ export default class SimLoop {
       }
       if (e.code == "KeyQ") {
         let camPos = this.camera.getPosition();
+        let cCamPos = new Vec3(camPos[0], camPos[1], camPos[2]);
         let physicsBody = new CANNON.Body({
           allowSleep: true,
           mass: 1,
-          position: new Vec3(camPos[0], camPos[1], camPos[2]),
+          position: cCamPos,
           shape: new CANNON.Sphere(1.0)
         });
+        let frontDir = this.camera.getFront();
+        let impulse = new Vec3(-frontDir[0], frontDir[1], -frontDir[2]);
+        impulse = impulse.mult(15, impulse);
+        physicsBody.applyImpulse(impulse, cCamPos);
         let physicsEntity = new PhysicsEntity(physicsBody, "football");
         this.entites.push(physicsEntity);
         this.physicsWorld.world.addBody(physicsBody);
