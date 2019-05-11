@@ -7,8 +7,8 @@ import Material from "./render_engine/model/material";
 import { MaterialShader } from "./render_engine/shader/shader_config";
 import RenderDefaults from "./render_engine/render_defaults";
 import SimLoop from "./sim_loop";
-import { Box, LoadingScreen, Button, Input } from "./ui/index";
-
+import { renderUI } from './ui/entry';
+import { LoadingScreen } from './ui/index';
 export default class Main {
   private static display = DisplayManager.getInstance();
   private static renderEngine: RenderEngine;
@@ -18,29 +18,7 @@ export default class Main {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
     var renderDefaults = RenderDefaults.getInstance();
     var loader = new Loader(Main.modelLoaded);
-    let box1 = new Box("Options");
-    box1.push(new Input("Gravity", function(value) {}).render());
-    box1.push(new Input("Force", function(value) {}).render());
-
-    let box2 = new Box("Worlds");
-    box2.push(new Button("Earth", function() {}).render());
-    box2.push(new Button("Space", function() {}).render());
-    document.getElementsByTagName("body")[0].appendChild(
-      box1.render({
-        position: "absolute",
-        right: "5px",
-        left: "auto",
-        top: "5px"
-      })
-    );
-    document.getElementsByTagName("body")[0].appendChild(
-      box2.render({
-        position: "absolute",
-        right: "auto",
-        left: "5px",
-        top: "5px"
-      })
-    );
+    renderUI();
     renderDefaults.setLoadCompleteCallback(() => {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
@@ -63,6 +41,7 @@ export default class Main {
       loadedCnt,
       name
     );
+    // document.getElementsByTagName('body')[0].appendChild(loadingScreen);
     switch (name) {
       case "goat":
         let image = new Image();
