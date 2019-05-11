@@ -28,6 +28,7 @@ export default class Renderer {
 
   public renderLitColor(model: Model, entites: Entity[]) {
     model.mesh.bindMesh();
+    this.litColorShader.start();
     this.litColorShader.loadMaterial(model.material);
     for (let entity of entites) {
       this.litColorShader.loadTranformation(entity.getTransMatrix());

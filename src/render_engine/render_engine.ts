@@ -80,7 +80,7 @@ export default class RenderEngine {
     );
 
     this.sunPosition = vec3.fromValues(0, 500, 10);
-    this.sunColor = vec3.fromValues(1, 1, 1);
+    this.sunColor = vec3.fromValues(0.7, 0.7, 0.7);
     this.fogColor = vec3.fromValues(1, 1, 1);
 
     this.globalFSBuffer.setSceneAmbient(this.sceneAmbient);
