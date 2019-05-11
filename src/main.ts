@@ -7,7 +7,7 @@ import Material from "./render_engine/model/material";
 import { MaterialShader } from "./render_engine/shader/shader_config";
 import RenderDefaults from "./render_engine/render_defaults";
 import SimLoop from "./sim_loop";
-import { Box, LoadingScreen, Input } from './ui/index';
+import { Box, LoadingScreen, Button, Input } from "./ui/index";
 
 export default class Main {
   private static display = DisplayManager.getInstance();
@@ -18,16 +18,29 @@ export default class Main {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
     var renderDefaults = RenderDefaults.getInstance();
     var loader = new Loader(Main.modelLoaded);
-    let box1 = (new Box('Options'));
-    box1.push((new Input('Gravity', function(value){})).render());
-    box1.push(new Input('Force', function(value){}).render());
-    
-    document.getElementsByTagName('body')[0].appendChild(box1.render({
-      position : 'absolute',
-      right: '5px',
-      left : 'auto',
-      top : '5px'
-    }));
+    let box1 = new Box("Options");
+    box1.push(new Input("Gravity", function(value) {}).render());
+    box1.push(new Input("Force", function(value) {}).render());
+
+    let box2 = new Box("Worlds");
+    box2.push(new Button("Earth", function() {}).render());
+    box2.push(new Button("Space", function() {}).render());
+    document.getElementsByTagName("body")[0].appendChild(
+      box1.render({
+        position: "absolute",
+        right: "5px",
+        left: "auto",
+        top: "5px"
+      })
+    );
+    document.getElementsByTagName("body")[0].appendChild(
+      box2.render({
+        position: "absolute",
+        right: "auto",
+        left: "5px",
+        top: "5px"
+      })
+    );
     renderDefaults.setLoadCompleteCallback(() => {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
@@ -45,6 +58,11 @@ export default class Main {
   }
 
   private static modelLoaded(model: Model, name: string, loadedCnt: number) {
+    var loadingScreen: HTMLElement = new LoadingScreen().render(
+      Main.modelsCount,
+      loadedCnt,
+      name
+    );
     switch (name) {
       case "goat":
         let image = new Image();
@@ -87,10 +105,9 @@ export default class Main {
         break;
     }
     if (loadedCnt == 0) {
-
       Main.animationLoop(0);
     }
-  } 
+  }
 
   private static animationLoop(frameTime: number): void {
     Main.display.updateTime(frameTime);
