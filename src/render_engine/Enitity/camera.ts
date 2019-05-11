@@ -12,7 +12,7 @@ export default class Camera {
   private static readonly YAW = 0.0;
   private static readonly PITCH = 0.0;
   private static readonly ROLL = 0.0;
-  private static readonly SPEED = 5.5;
+  private static readonly SPEED = 15.5;
   private static readonly SENSITIVITY = 4.0;
   private static readonly ZOOM = 45.0;
 

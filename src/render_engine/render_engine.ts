@@ -79,8 +79,13 @@ export default class RenderEngine {
       [this.litTextureShader, this.litColorShader, this.skyboxShader]
     );
 
+<<<<<<< HEAD
     this.sunPosition = vec3.fromValues(0, 1000, 500);
     this.sunColor = vec3.fromValues(0.7, 0.7, 0.7);
+=======
+    this.sunPosition = vec3.fromValues(0, 500, 10);
+    this.sunColor = vec3.fromValues(1, 1, 1);
+>>>>>>> 51662598d0c9669de2a7d94858534c48734dce29
     this.fogColor = vec3.fromValues(1, 1, 1);
 
     this.globalFSBuffer.setSceneAmbient(this.sceneAmbient);
