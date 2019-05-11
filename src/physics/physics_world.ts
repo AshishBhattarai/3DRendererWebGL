@@ -1,18 +1,29 @@
-import "@stardazed/ammo";
-class PhysicsWorld {
+import CANNON from "cannon";
+
+export default class PhysicsWorld {
+  private static readonly GRAVITY = -10.0;
+  private static readonly FIXED_DELTA = 1 / 60;
+  private static readonly MAX_STEPS = 3;
+
+  private static instance = new PhysicsWorld();
+
+  public world: CANNON.World;
+
   constructor() {
-    let broadphase = new Ammo.btDbvtBroadphase();
-    let collConfig = new Ammo.btDefaultCollisionConfiguration();
-    let dispatcher = new Ammo.btCollisionDispatcher(collConfig);
-    let solver = new Ammo.btSequentialImpulseConstraintSolver();
+    if (PhysicsWorld.instance) {
+      throw new Error(
+        "Error: Instatiation failed: use PhysicsWorld.getInstance"
+      );
+    }
+    this.world = new CANNON.World();
+    this.world.gravity.set(0, PhysicsWorld.GRAVITY, 0);
+  }
 
-    let dynamicsWorld = new Ammo.btDiscreteDynamicsWorld(
-      dispatcher,
-      broadphase,
-      solver,
-      collConfig
-    );
+  public process(delta: number) {
+    this.world.step(PhysicsWorld.FIXED_DELTA, delta, PhysicsWorld.MAX_STEPS);
+  }
 
-    dynamicsWorld.setGravity(new Ammo.btVector3(0.0, -10.0, 0.0));
+  static getInstance(): PhysicsWorld {
+    return this.instance;
   }
 }

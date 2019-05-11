@@ -32,27 +32,59 @@ export default class Main {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
       this.simLoop = new SimLoop(this.renderEngine);
-      let models = ["res/goat.obj"];
-      loader.loadModels(models);
+      let models = [
+        "res/goat.obj",
+        "res/sphere.obj",
+        "res/football.obj",
+        "res/ball.obj"
+      ];
       Main.modelsCount = models.length;
+      loader.loadModels(models)
     });
     RenderDefaults.getInstance().loadResource();
   }
 
   private static modelLoaded(model: Model, name: string, loadedCnt: number) {
-    var loadingScreen : HTMLElement = (new LoadingScreen()).render(Main.modelsCount,loadedCnt,name);
-    console.log(loadingScreen);
-    if (name == "goat") {
-      let image = new Image();
-      image.onload = () => {
-        let mat = new Material({
-          diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
-          materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
-        });
-        model.material = mat;
+    switch (name) {
+      case "goat":
+        let image = new Image();
+        image.onload = () => {
+          let mat = new Material({
+            diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat;
+          Main.renderEngine.addModel(model, name);
+        };
+        image.src = "res/texture.png";
+        break;
+      case "sphere":
         Main.renderEngine.addModel(model, name);
-      };
-      image.src = "res/texture.png";
+        break;
+      case "football":
+        let image2 = new Image();
+        image2.onload = () => {
+          let mat2 = new Material({
+            diffuseMap: new Texture(image2, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat2;
+          Main.renderEngine.addModel(model, name);
+        };
+        image2.src = "res/football.png";
+        break;
+      case "ball":
+        let image3 = new Image();
+        image3.onload = () => {
+          let mat3 = new Material({
+            diffuseMap: new Texture(image3, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat3;
+          Main.renderEngine.addModel(model, name);
+        };
+        image3.src = "res/ball.png";
+        break;
     }
     if (loadedCnt == 0) {
 

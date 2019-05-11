@@ -18,7 +18,7 @@ export default class Entity {
     this.scale = scale;
   }
 
-  public getTransMatrix() {
+  public getTransMatrix(): mat4 {
     var transformation = mat4.create();
     mat4.identity(transformation);
     mat4.translate(transformation, transformation, this.position);
