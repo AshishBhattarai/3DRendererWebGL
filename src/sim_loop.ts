@@ -75,7 +75,7 @@ export default class SimLoop {
           shape: new CANNON.Sphere(1.0)
         });
         let frontDir = this.camera.getFront();
-        let impulse = new Vec3(-frontDir[0], frontDir[1], -frontDir[2]);
+        let impulse = new Vec3(-frontDir[0], -frontDir[1], -frontDir[2]);
         impulse = impulse.mult(15, impulse);
         physicsBody.applyImpulse(impulse, cCamPos);
         let physicsEntity = new PhysicsEntity(physicsBody, "football");
