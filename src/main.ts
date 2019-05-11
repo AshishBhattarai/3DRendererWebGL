@@ -63,15 +63,20 @@ export default class Main {
       loadedCnt,
       name
     );
-    document.getElementsByTagName('body')[0].appendChild(loadingScreen);
-    if (name == "goat") {
-      let image = new Image();
-      image.onload = () => {
-        let mat = new Material({
-          diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
-          materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
-        });
-        model.material = mat;
+    switch (name) {
+      case "goat":
+        let image = new Image();
+        image.onload = () => {
+          let mat = new Material({
+            diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat;
+          Main.renderEngine.addModel(model, name);
+        };
+        image.src = "res/texture.png";
+        break;
+      case "sphere":
         Main.renderEngine.addModel(model, name);
         break;
       case "football":
