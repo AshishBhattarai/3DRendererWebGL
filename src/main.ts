@@ -7,6 +7,7 @@ import Material from "./render_engine/model/material";
 import { MaterialShader } from "./render_engine/shader/shader_config";
 import RenderDefaults from "./render_engine/render_defaults";
 import SimLoop from "./sim_loop";
+import { Box } from './ui/index';
 
 export default class Main {
   private static display = DisplayManager.getInstance();
@@ -17,7 +18,8 @@ export default class Main {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
     var renderDefaults = RenderDefaults.getInstance();
     var loader = new Loader(Main.modelLoaded);
-
+    document.getElementsByTagName('body')[0].appendChild((new Box('Options')).render())
+    
     renderDefaults.setLoadCompleteCallback(() => {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
