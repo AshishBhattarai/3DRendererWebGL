@@ -91,6 +91,27 @@ export class Input{
     }
 }
 
+export class Button{
+    public button:HTMLElement;
+    public label:HTMLElement;
+    public container:HTMLElement;
+    public constructor(label, callback){
+        this.container = document.createElement('div');
+        this.label = document.createElement('div');
+        this.button = document.createElement('button');
+        this.button.classList.add('ui-button');
+        this.button.innerHTML = label;
+        this.button.onclick = () => {
+            callback();
+        }
+    }
+    render = () => {
+        this.container.innerHTML = '';
+        this.container.appendChild(this.button);
+        return this.container;
+    }
+}
+
 export class LoadingScreen{
     private container:HTMLElement;
     private loader: HTMLElement;
