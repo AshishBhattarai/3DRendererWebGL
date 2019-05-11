@@ -23,7 +23,7 @@ export default class SimLoop {
     this.renderEngine = renderEngine;
     this.renderEngine.setSkybox(RenderDefaults.getInstance().getSkybox());
     this.renderEngine.prepare();
-    this.camera = new Camera(vec3.fromValues(0, 10, 0));
+    this.camera = new Camera(vec3.fromValues(-200, 10, -200));
     this.setActionKeys();
     window.onmousemove = (e: MouseEvent) => {
       this.camera.processMouseMovment(
@@ -34,17 +34,21 @@ export default class SimLoop {
     };
 
     // Entites dummy data
-    for (let i = 0; i < 20; ++i) {
-      for (let j = 0; j < 20; ++j) {
-        this.entites.push(
-          new Entity("goat", vec3.fromValues(i + j - 40, i - j, -20))
-        );
-      }
-    }
-    //this.entites.push(new Entity("football", vec3.fromValues(0, 10, 0)));
+
+    this.entites.push(new Entity("goat", vec3.fromValues(-203, 0, -225)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-167, 0, -200)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-330, 0, -333)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-20, 0, -106)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-120, 0, -66)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-304, 0, -25)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-23, 0, -22)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-3, 0, -2)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-173, 0, -25)));
+    this.entites.push(new Entity("goat", vec3.fromValues(-200, 0, -195)));
+
 
     // Terrain
-    this.terrains.push(new Terrain(vec2.fromValues(0, 0)));
+    this.terrains.push(new Terrain(vec2.fromValues(0, 0), 400, 4, 50));
     this.terrains[0].position[0] = 100;
 
     //Physics test
@@ -105,11 +109,7 @@ export default class SimLoop {
     this.processInput(delta);
     /* Process Data*/
     this.physicsWorld.process(delta);
-    this.entites.forEach((entity, index) => {
-      if (entity.modelName == "goat") {
-        entity.rotation[1] = (frameTime / 1000) * 1.5 * 0.5;
-      }
-    });
+   
     this.renderEngine.processEntities(this.entites);
     this.renderEngine.processTerrains(this.terrains);
 
