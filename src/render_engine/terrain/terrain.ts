@@ -60,7 +60,7 @@ export default class Terrain {
           indices.push((z + 1) * this.vertexCount + x);
         }
       }
-      if (z < this.vertexCount - 3) {
+      if (z < this.vertexCount - 2) {
         indices.push((z + 1) * this.vertexCount + (this.vertexCount - 1));
         indices.push((z + 1) * this.vertexCount);
       }
