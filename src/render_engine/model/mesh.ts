@@ -3,7 +3,7 @@ import { ShaderConfig } from "../shader/shader_config";
 
 export interface IMesh {
   vertexData: Float32Array;
-  normalData: Float32Array;
+  normalData?: Float32Array;
   indexData: Uint32Array;
   uvData?: Float32Array;
 }
@@ -44,16 +44,22 @@ export default class Mesh {
     gl.bufferData(gl.ARRAY_BUFFER, iMesh.vertexData, gl.STATIC_DRAW);
     gl.vertexAttribPointer(ShaderConfig.VERTEX_LOC, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, iMesh.normalData, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(ShaderConfig.NORMAL_LOC, 3, gl.FLOAT, false, 0, 0);
-
+    if (iMesh.normalData) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, iMesh.normalData, gl.STATIC_DRAW);
+      gl.vertexAttribPointer(ShaderConfig.NORMAL_LOC, 3, gl.FLOAT, false, 0, 0);
+    } else {
+      gl.deleteBuffer(this.normalBuffer);
+      gl.disableVertexAttribArray(ShaderConfig.NORMAL_LOC);
+      this.normalBuffer = null;
+    }
     if (iMesh.uvData) {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, iMesh.uvData, gl.STATIC_DRAW);
       gl.vertexAttribPointer(ShaderConfig.UV_LOC, 2, gl.FLOAT, false, 0, 0);
     } else {
       gl.deleteBuffer(this.uvBuffer);
+      gl.disableVertexAttribArray(ShaderConfig.UV_LOC);
       this.uvBuffer = null;
     }
 

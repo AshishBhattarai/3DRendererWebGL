@@ -122,7 +122,6 @@ export default class Camera {
 
     this.rotation[0] += xoffset * speed;
     this.rotation[1] += yoffset * speed;
-    console.log(this.rotation[0]);
 
     if (this.rotation[0] > 89.0) {
       this.rotation[0] = 89.0;

@@ -5,6 +5,7 @@ import Camera, { Movement } from "./render_engine/Enitity/camera";
 import DisplayManager from "./render_engine/renderer/display_manager";
 import Terrain from "./render_engine/terrain/terrain";
 import AxisKeyMap, { BoardKeys } from "./input/axis_keymap";
+import RenderDefaults from "./render_engine/render_defaults";
 
 export default class SimLoop {
   private renderEngine: RenderEngine;
@@ -16,6 +17,7 @@ export default class SimLoop {
 
   constructor(renderEngine: RenderEngine) {
     this.renderEngine = renderEngine;
+    this.renderEngine.setSkybox(RenderDefaults.getInstance().getSkybox());
     this.renderEngine.prepare();
     this.camera = new Camera(vec3.fromValues(0, 10, 0));
     this.setActionKeys();

@@ -15,6 +15,7 @@ struct Material{
 uniform Material material;
 
 layout(std140)uniform GlobalFSData{
+	vec3 fogColor;
 	vec3 sunColor;
 	float sceneAmbient;
 };

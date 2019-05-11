@@ -15,12 +15,12 @@ export default class Main {
 
   public static main(): void {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
-    this.renderEngine = new RenderEngine();
     var renderDefaults = RenderDefaults.getInstance();
     var loader = new Loader(Main.modelLoaded);
 
     renderDefaults.setLoadCompleteCallback(() => {
       /* Default Resources Loaded */
+      this.renderEngine = new RenderEngine();
       this.simLoop = new SimLoop(this.renderEngine);
       loader.loadModels(["res/goat.obj"]);
     });

@@ -82,6 +82,10 @@ export default class DisplayManager {
     return this.delta;
   }
 
+  public getFrameTime(): number {
+    return this.lastFrameTime;
+  }
+
   public getGlContext(): WebGL2RenderingContext {
     return this.gl;
   }

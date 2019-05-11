@@ -12,6 +12,9 @@ import Entity from "./Enitity/entity";
 import Shader from "./shader/shader";
 import Camera from "./Enitity/camera";
 import Terrain from "./terrain/terrain";
+import Skybox from "./model/skybox";
+import SkyboxShader from "./shader/skybox_shader";
+import SkyboxRenderer from "./renderer/skybox_renderer";
 
 export default class RenderEngine {
   /* Data */
@@ -21,24 +24,33 @@ export default class RenderEngine {
   private TextureModelsMap: Map<string, Entity[]> = new Map<string, Entity[]>();
   private terrians: Terrain[];
 
-  /* Renderer */
+  /* Shaders */
   private litColorShader: LitColorShader;
   private litTextureShader: LitTextureShader;
+  private skyboxShader: SkyboxShader;
+
+  /* Renderer */
   private renderer: Renderer;
+  private skyboxRenderer: SkyboxRenderer;
+
+  /* Render Data */
   private globalVSBuffer: GlobalVSBuffer;
   private globalFSBuffer: GlobalFSBuffer;
   private prespectiveProj: mat4;
+  private sceneAmbient: number;
   private sunPosition: vec3;
   private sunColor: vec3;
-  private sceneAmbient: number;
+  private skybox: Skybox;
+  private fogColor: vec3;
 
   constructor() {
     this.litColorShader = new LitColorShader();
     this.litTextureShader = new LitTextureShader();
+    this.skyboxShader = new SkyboxShader();
     this.renderer = new Renderer(this.litColorShader, this.litTextureShader);
+    this.skyboxRenderer = new SkyboxRenderer(this.skyboxShader);
     this.globalFSBuffer = new GlobalFSBuffer();
     this.globalVSBuffer = new GlobalVSBuffer();
-
     this.sceneAmbient = 0.2;
     var displayManager = DisplayManager.getInstance();
     var vpSize = displayManager.getViewportSize();
@@ -58,22 +70,24 @@ export default class RenderEngine {
     this.bindUniformBuffer(
       ShaderConfig.GlobalVSBuffer,
       this.globalVSBuffer.getBindingPoint(),
-      [this.litTextureShader, this.litColorShader]
+      [this.litTextureShader, this.litColorShader, this.skyboxShader]
     );
 
     this.bindUniformBuffer(
       ShaderConfig.GlobalFSBuffer,
       this.globalFSBuffer.getBindingPoint(),
-      [this.litTextureShader, this.litColorShader]
+      [this.litTextureShader, this.litColorShader, this.skyboxShader]
     );
 
     this.sunPosition = vec3.fromValues(0, 0, 5);
     this.sunColor = vec3.fromValues(1, 1, 1);
+    this.fogColor = vec3.fromValues(1, 1, 1);
 
     this.globalFSBuffer.setSceneAmbient(this.sceneAmbient);
     this.globalFSBuffer.setSunColor(this.sunColor);
     this.globalVSBuffer.setProjectionMatrix(this.prespectiveProj);
     this.globalVSBuffer.setSunPosition(this.sunPosition);
+    this.globalFSBuffer.setFogColor(this.fogColor);
 
     console.log(gl.getError());
   }
@@ -87,7 +101,7 @@ export default class RenderEngine {
   public prepare(): void {
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
-    gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(1, 0, 0, 1);
   }
 
   public renderFrame(frameTime: number, camera: Camera): void {
@@ -111,6 +125,8 @@ export default class RenderEngine {
 
     // Render Terrains
     this.renderer.renderTerrain(this.terrians);
+
+    this.skyboxRenderer.render(this.skybox, camera.getViewMatrix());
   }
 
   public addModel(model: Model, name: string) {
@@ -156,5 +172,9 @@ export default class RenderEngine {
 
   public processTerrains(terrains: Terrain[]) {
     this.terrians = terrains;
+  }
+
+  public setSkybox(skybox: Skybox) {
+    this.skybox = skybox;
   }
 }

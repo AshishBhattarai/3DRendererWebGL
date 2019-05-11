@@ -1,13 +1,15 @@
 import Texture, { TextureType } from "./model/texture";
 import Mesh, { ModelType } from "./model/mesh";
+import Skybox from "./model/skybox";
 
 // Default textures / models for renderer
 
 export default class RenderDefaults {
-  private static readonly NUM_RES = 3;
+  private static readonly NUM_RES = 4;
   private static instance = new RenderDefaults();
   private checkerTexture: Texture;
   private blackMapTexture: Texture;
+  private skybox: Skybox;
   private mesh: Mesh;
   private loadedCount: number = RenderDefaults.NUM_RES;
 
@@ -46,51 +48,10 @@ export default class RenderDefaults {
 
   private loadMesh(): void {
     var vertices = new Float32Array([
-      // Front face
-      -1.0,
-      -1.0,
-      1.0,
-      1.0,
-      -1.0,
       1.0,
       1.0,
       1.0,
       1.0,
-      -1.0,
-      1.0,
-      1.0,
-
-      // Back face
-      -1.0,
-      -1.0,
-      -1.0,
-      -1.0,
-      1.0,
-      -1.0,
-      1.0,
-      1.0,
-      -1.0,
-      1.0,
-      -1.0,
-      -1.0,
-
-      // Top face
-      -1.0,
-      1.0,
-      -1.0,
-      -1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      -1.0,
-
-      // Bottom face
-      -1.0,
-      -1.0,
       -1.0,
       1.0,
       -1.0,
@@ -98,36 +59,66 @@ export default class RenderDefaults {
       1.0,
       -1.0,
       1.0,
-      -1.0,
-      -1.0,
+      1.0, // (front)
       1.0,
-
-      // Right face
-      1.0,
-      -1.0,
-      -1.0,
-      1.0,
-      1.0,
-      -1.0,
       1.0,
       1.0,
       1.0,
       1.0,
       -1.0,
       1.0,
-
-      // Left face
       -1.0,
       -1.0,
+      1.0,
       -1.0,
-      -1.0,
-      -1.0,
+      1.0, // (right)
+      1.0,
+      1.0,
       1.0,
       -1.0,
       1.0,
       1.0,
       -1.0,
       1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0, // (top)
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0, // (left)
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      -1.0, // (bottom)
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      -1.0,
       -1.0
     ]);
 
@@ -135,39 +126,39 @@ export default class RenderDefaults {
       0,
       1,
       2,
-      0,
       2,
       3,
+      0, //  (front)
       4,
       5,
       6,
-      4,
       6,
       7,
+      4, //  (right)
       8,
       9,
       10,
-      8,
       10,
       11,
+      8, //  (top)
       12,
       13,
       14,
-      12,
       14,
       15,
+      12, //  (left)
       16,
       17,
       18,
-      16,
       18,
       19,
+      16, //  (bottom)
       20,
       21,
       22,
-      20,
       22,
-      23
+      23,
+      20 //  (back)
     ]);
 
     var normals = new Float32Array([
@@ -261,9 +252,25 @@ export default class RenderDefaults {
     this.resLoadComplete();
   }
 
+  private loadSkybox() {
+    let paths: string[] = [];
+    paths.push(
+      "res/defaults/sky/left.png",
+      "res/defaults/sky/right.png",
+      "res/defaults/sky/down.png",
+      "res/defaults/sky/up.png",
+      "res/defaults/sky/front.png",
+      "res/defaults/sky/back.png"
+    );
+    this.skybox = new Skybox(paths, TextureType.DEFAULT_MAP, () => {
+      this.resLoadComplete();
+    });
+  }
+
   public loadResource() {
     this.loadTexture();
     this.loadMesh();
+    this.loadSkybox();
   }
 
   public static getInstance(): RenderDefaults {
@@ -280,6 +287,10 @@ export default class RenderDefaults {
 
   public getMesh(): Mesh {
     return this.mesh;
+  }
+
+  public getSkybox(): Skybox {
+    return this.skybox;
   }
 
   public setLoadCompleteCallback(loadCompleteCallback: () => void) {
