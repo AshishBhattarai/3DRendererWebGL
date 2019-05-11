@@ -1,0 +1,75 @@
+.ui-container{
+    position: absolute;
+    top:10;
+    left:10;
+    background-color:rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    padding:10px;
+    font-family: 'Courier New', Courier, monospace;
+    width:200px;
+}
+.ui-container-list-item{
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    margin-top:5px;
+}
+.ui-container-list{
+    margin-top: 5px;
+}
+.ui-box-item{
+    background: rgba(0, 0, 0, 0.3);
+    border:1px solid rgba(0, 0, 0, 0.1);
+    margin:5px;
+    border-radius:3px;
+    color:rgba(255, 255, 255, 0.863);
+    padding: 5px;
+}
+
+.ui-box-item:hover{
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.ui-label{
+    background-color:auto;
+    width:50% !important;
+    text-align: left !important;    
+}
+
+.ui-label , .ui-input-field, .ui-button{
+    border:0;
+    border-radius:3px;
+    padding:0;
+    text-align:center;
+    width:50%;
+}
+.ui-input-field, .ui-button{
+    background:rgba(0, 0, 0, 0.3);
+    color:rgba(255, 255, 255, 0.945);
+    padding:2px;
+}
+.ui-button:hover, .ui-button:focus, .ui-button:active, .ui-input-field:hover, .ui-input-field:focus{
+    background:rgba(0, 0, 0, 0.5);
+    outline:none;
+}
+.ui-button{
+    padding: 5px 20px;
+    outline: none;
+}
+
+.ui-close-button{
+    padding:0;
+    width:80px;
+    float: right;
+}
+.ui-loading-screen-container{
+    background-color:rgba(255, 255, 255, 0.3);
+    padding:10px;
+    position: absolute;
+    top:30%;
+    width:50%;
+    left:25%;
+    border-radius:3px;
+}

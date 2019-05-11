@@ -4,7 +4,8 @@ dist/*.ts
 dist/*.js
 dist/*.map
 dist/*.html
+dist/*.css
 node_modules
 package-lock.json
 src/render_engine/shader/glsl/shader_source.ts
-yarn.log
+yarn.lock
