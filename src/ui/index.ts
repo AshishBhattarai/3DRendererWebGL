@@ -38,14 +38,17 @@ export class Box{
             this.renderBody();
         });
         this.header.appendChild(toggleView);
-        this.push((new Input('Gravity', function(value){})).render());
-        this.push(new Input('Force', function(value){}).render());
-        this.push(new Input('Friction', function(value){}).render());
-        this.push(new Input('Mass of Object', function(value){}).render());
-        this.push(new Input('Mass of Brick', function(value){}).render());
+        
     }
 
-    render = () => {
+    render = (style = null) => {
+        if(style){
+            for (var property in style) {
+                if (style.hasOwnProperty(property)) {
+                    this.container.style[property] = style[property];
+                }
+            }
+        }
         this.renderBody();
         return this.container;
     }
@@ -99,11 +102,13 @@ export class LoadingScreen{
         this.container.classList.add('ui-loading-screen-container');
         this.loader.classList.add('ui-loading-screen-loader');
     }
-    updateFrame = (total_resources, remaining_resources, current_resource_name ) => {
+    render = (total_resources, remaining_resources, current_resource_name ) => {
+        this.container.innerHTML = '';
         var loaded_percent  = 100*(total_resources - remaining_resources)/ total_resources;
         if(loaded_percent == 100){
             return;
         }
+        this.resource.innerHTML = "Loading "+current_resource_name+" ...";
         this.container.appendChild(this.loader);
         this.container.appendChild(this.resource);
         this.loader.style.width = loaded_percent+'%';
