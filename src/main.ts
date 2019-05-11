@@ -7,8 +7,8 @@ import Material from "./render_engine/model/material";
 import { MaterialShader } from "./render_engine/shader/shader_config";
 import RenderDefaults from "./render_engine/render_defaults";
 import SimLoop from "./sim_loop";
-import { renderUI } from './ui/entry';
-import { LoadingScreen } from './ui/index';
+import { renderUI } from "./ui/entry";
+import { LoadingScreen } from "./ui/index";
 export default class Main {
   private static display = DisplayManager.getInstance();
   private static renderEngine: RenderEngine;
@@ -27,10 +27,11 @@ export default class Main {
         "res/goat.obj",
         "res/sphere.obj",
         "res/football.obj",
-        "res/ball.obj"
+        "res/ball.obj",
+        "res/brick.obj"
       ];
       Main.modelsCount = models.length;
-      loader.loadModels(models)
+      loader.loadModels(models);
     });
     RenderDefaults.getInstance().loadResource();
   }
@@ -81,6 +82,18 @@ export default class Main {
           Main.renderEngine.addModel(model, name);
         };
         image3.src = "res/ball.png";
+        break;
+      case "brick":
+        let image4 = new Image();
+        image4.onload = () => {
+          let mat4 = new Material({
+            diffuseMap: new Texture(image4, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat4;
+          Main.renderEngine.addModel(model, name);
+        };
+        image4.src = "res/brick.jpg";
         break;
     }
     if (loadedCnt == 0) {
