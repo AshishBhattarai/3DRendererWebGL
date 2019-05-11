@@ -22,26 +22,40 @@ export default class Main {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
       this.simLoop = new SimLoop(this.renderEngine);
-      loader.loadModels(["res/goat.obj", "res/sphere.obj"]);
+      loader.loadModels(["res/goat.obj", "res/sphere.obj", "res/football.obj"]);
     });
     RenderDefaults.getInstance().loadResource();
   }
 
   private static modelLoaded(model: Model, name: string, loadedCnt: number) {
-    if (name == "goat") {
-      let image = new Image();
-      image.onload = () => {
-        let mat = new Material({
-          diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
-          materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
-        });
-        model.material = mat;
+    switch (name) {
+      case "goat":
+        let image = new Image();
+        image.onload = () => {
+          let mat = new Material({
+            diffuseMap: new Texture(image, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat;
+          Main.renderEngine.addModel(model, name);
+        };
+        image.src = "res/texture.png";
+        break;
+      case "sphere":
         Main.renderEngine.addModel(model, name);
-      };
-      image.src = "res/texture.png";
-    }
-    if (name == "sphere") {
-      Main.renderEngine.addModel(model, name);
+        break;
+      case "football":
+        let image2 = new Image();
+        image2.onload = () => {
+          let mat2 = new Material({
+            diffuseMap: new Texture(image2, TextureType.DIFFUSE_MAP),
+            materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
+          });
+          model.material = mat2;
+          Main.renderEngine.addModel(model, name);
+        };
+        image2.src = "res/football.png";
+        break;
     }
     if (loadedCnt == 0) {
       Main.animationLoop(0);

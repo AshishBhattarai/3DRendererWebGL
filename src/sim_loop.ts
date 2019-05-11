@@ -41,7 +41,7 @@ export default class SimLoop {
         );
       }
     }
-    this.entites.push(new Entity("sphere", vec3.fromValues(0, 10, 0)));
+    this.entites.push(new Entity("football", vec3.fromValues(0, 10, 0)));
 
     // Terrain
     this.terrains.push(new Terrain(vec2.fromValues(0, 0)));
@@ -73,7 +73,7 @@ export default class SimLoop {
           position: new Vec3(camPos[0], camPos[1], camPos[2]),
           shape: new CANNON.Sphere(1.0)
         });
-        let physicsEntity = new PhysicsEntity(physicsBody, "sphere");
+        let physicsEntity = new PhysicsEntity(physicsBody, "football");
         this.entites.push(physicsEntity);
         this.physicsWorld.world.addBody(physicsBody);
       }
