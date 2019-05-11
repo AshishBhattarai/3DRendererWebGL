@@ -3,11 +3,12 @@ import Mesh, { ModelType } from "../model/mesh";
 import Material from "../model/material";
 import { MaterialShader } from "../shader/shader_config";
 import { gl } from "../ogl_globals";
+import Texture, { TextureType } from "../model/texture";
 
 export default class Terrain {
   static readonly VERTEX_CNT = 20;
-  static readonly SIZE = 100;
-  static readonly TILING_FACTOR = 20;
+  static readonly SIZE = 500;
+  static readonly TILING_FACTOR = 50;
 
   public position: vec2;
   private size: number;
@@ -34,7 +35,13 @@ export default class Terrain {
     this.material = new Material({
       materialShader: MaterialShader.LIT_MATERIAL_TEXTURE_SHADER
     });
-    this.material.diffuseMap.setTextureWrap(gl.REPEAT);
+
+    let image = new Image();
+    image.onload = () => {
+      this.material.diffuseMap = new Texture(image, TextureType.DEFAULT_MAP);
+      this.material.diffuseMap.setTextureWrap(gl.REPEAT);
+    };
+    image.src = "res/grass.png";
   }
 
   private generateTerrain() {
