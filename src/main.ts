@@ -43,7 +43,7 @@ export default class Main {
     if (loadedCnt == 0) {
       Main.animationLoop(0);
     }
-  }
+  } 
 
   private static animationLoop(frameTime: number): void {
     Main.display.updateTime(frameTime);
