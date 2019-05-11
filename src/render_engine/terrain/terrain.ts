@@ -7,7 +7,7 @@ import { gl } from "../ogl_globals";
 export default class Terrain {
   static readonly VERTEX_CNT = 20;
   static readonly SIZE = 100;
-  static readonly TILING_FACTOR = 100;
+  static readonly TILING_FACTOR = 20;
 
   public position: vec2;
   private size: number;

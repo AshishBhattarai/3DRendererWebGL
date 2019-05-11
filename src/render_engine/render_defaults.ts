@@ -1,6 +1,7 @@
 import Texture, { TextureType } from "./model/texture";
 import Mesh, { ModelType } from "./model/mesh";
 import Skybox from "./model/skybox";
+import { gl } from "./ogl_globals";
 
 // Default textures / models for renderer
 
@@ -34,6 +35,10 @@ export default class RenderDefaults {
     var imageA = new Image();
     imageA.onload = () => {
       this.checkerTexture = new Texture(imageA, TextureType.DEFAULT_MAP);
+      this.checkerTexture.setTextureFilter(
+        gl.NEAREST,
+        gl.NEAREST_MIPMAP_NEAREST
+      );
       this.resLoadComplete();
     };
     imageA.src = "res/defaults/checker.bmp";
