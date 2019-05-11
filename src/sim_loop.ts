@@ -41,7 +41,7 @@ export default class SimLoop {
         );
       }
     }
-    this.entites.push(new Entity("football", vec3.fromValues(0, 10, 0)));
+    //this.entites.push(new Entity("football", vec3.fromValues(0, 10, 0)));
 
     // Terrain
     this.terrains.push(new Terrain(vec2.fromValues(0, 0)));
