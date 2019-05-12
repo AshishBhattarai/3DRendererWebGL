@@ -2,6 +2,9 @@ import { Box, Button, Input, TextBox } from './index'
 import { vec3 } from 'gl-matrix';
 import SimLoop from '../sim_loop';
 import SceneManager from '../scene_manager';
+import PhysicsWorld from "../physics/physics_world";
+import { Vec3 } from "cannon";
+import Main from '../main';
 
 export class UI{
   public box1 : Box;
@@ -17,10 +20,21 @@ export class UI{
     
   }
   public render = () => {
-    this.box1.push(new Input("Gravity", function(value) {}).render());
-    this.box1.push(new Input("Force", function(value) {}).render());
-    this.box1.push(new Input("Friction", function(value) {}).render());
-    this.box1.push(new Input("Ball Mass", function(value) {}).render());
+    this.box1.push(
+      new Input("Gravity", function(value: number) {
+        PhysicsWorld.getInstance().world.gravity = new Vec3(0, -value, 0);
+      },10).render()
+    );
+    this.box1.push(
+      new Input("Force", function(value: number) {
+        Main.simLoop.ballImpulse = value;
+      },0).render()
+    );
+    this.box1.push(
+      new Input("Mass", function(value: number) {
+        Main.simLoop.ballMass = value;
+      },10).render()
+    );
 
     this.scenes.getAllSceneNames().map(scene => {
       this.box2.push(new Button(scene.charAt(0).toUpperCase() + scene.slice(1), () => {
@@ -52,7 +66,7 @@ export class UI{
         position: "absolute",
         right: "auto",
         left: "5px",
-        top: "18%"
+        top: "25%"
       })
     );
   }

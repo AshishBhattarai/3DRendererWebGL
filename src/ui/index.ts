@@ -71,17 +71,18 @@ export class Input{
     public input:HTMLElement;
     public label:HTMLElement;
     public container:HTMLElement;
-    public constructor(label, callback, value = null){
+    public constructor(label: string, callback: (n: number)=>void, value: number = 0){
         this.container = document.createElement('div');
         this.label = document.createElement('div');
         this.label.classList.add('ui-label');
         this.label.innerHTML = label;
         this.input = document.createElement('input');
         this.input.classList.add('ui-input-field');
-        this.input.onkeydown = (event) => {
+        this.input.onkeydown = (event: KeyboardEvent) => {
             var value = parseFloat(event.target.value);
             callback(value || 10);
         }
+        this.input.value = value;
     }
     render = () => {
         this.container.innerHTML = '';
