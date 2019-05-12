@@ -55,7 +55,11 @@
     width: 50%;
 }
 
-.ui-input-field,
+.ui-input-field{
+    background-color: rgba(0, 0, 0, 0.5);
+    color: rgba(255, 255, 255, 0.945);
+    padding: 2px;
+}
 .ui-button {
     background: rgba(255, 121, 63,1.0);
     color: rgba(255, 255, 255, 0.945);
@@ -81,6 +85,7 @@
     padding: 0;
     width: 80px;
     float: right;
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .ui-loading-screen-container {

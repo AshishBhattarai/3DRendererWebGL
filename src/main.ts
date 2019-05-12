@@ -7,7 +7,7 @@ import Material from "./render_engine/model/material";
 import { MaterialShader } from "./render_engine/shader/shader_config";
 import RenderDefaults from "./render_engine/render_defaults";
 import SimLoop from "./sim_loop";
-import { renderUI } from "./ui/entry";
+import { render as renderUI, renderUILoop, UI } from "./ui/entry";
 import { LoadingScreen } from "./ui/index";
 import SceneManager from "./scene_manager";
 export default class Main {
@@ -15,12 +15,11 @@ export default class Main {
   private static renderEngine: RenderEngine;
   private static simLoop: SimLoop;
   private static modelsCount: number;
-
+  private static ui : UI;
   public static main(): void {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
     var renderDefaults = RenderDefaults.getInstance();
     var loader = new Loader(Main.modelLoaded);
-    renderUI();
     renderDefaults.setLoadCompleteCallback(() => {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
@@ -35,6 +34,8 @@ export default class Main {
       ];
       Main.modelsCount = models.length;
       loader.loadModels(models);
+      Main.ui = renderUI();
+      Main.ui.render();
     });
     RenderDefaults.getInstance().loadResource();
   }

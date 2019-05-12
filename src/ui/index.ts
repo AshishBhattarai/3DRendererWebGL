@@ -127,6 +127,10 @@ export class TextBox{
         this.container.appendChild(this.TextBox);
         return this.container;
     }
+    update(data){
+        this.label.innerHTML = data;
+        return this.render();
+    }
 }
 
 export class LoadingScreen{
