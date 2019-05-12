@@ -9,11 +9,13 @@ import RenderDefaults from "./render_engine/render_defaults";
 import SimLoop from "./sim_loop";
 import { renderUI } from "./ui/entry";
 import { LoadingScreen } from "./ui/index";
+import SceneManager from "./scene_manager";
 export default class Main {
   private static display = DisplayManager.getInstance();
   private static renderEngine: RenderEngine;
   private static simLoop: SimLoop;
-  private static modelsCount;
+  private static modelsCount: number;
+
   public static main(): void {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
     var renderDefaults = RenderDefaults.getInstance();
@@ -22,6 +24,7 @@ export default class Main {
     renderDefaults.setLoadCompleteCallback(() => {
       /* Default Resources Loaded */
       this.renderEngine = new RenderEngine();
+      SceneManager.getInstance().loadDefaultScene(); // muse be done before SimLoop
       this.simLoop = new SimLoop(this.renderEngine);
       let models = [
         "res/goat.obj",
