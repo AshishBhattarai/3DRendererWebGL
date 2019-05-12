@@ -1,11 +1,15 @@
 import Entity from "../render_engine/Enitity/entity";
-import { mat4, quat } from "gl-matrix";
+import { mat4, quat, vec3 } from "gl-matrix";
 import { Vec3 } from "cannon";
 
 export default class PhysicsEntity extends Entity {
   private physicsBody: CANNON.Body;
-  constructor(physicsBody: CANNON.Body, modelName: string) {
-    super(modelName);
+  constructor(
+    physicsBody: CANNON.Body,
+    modelName: string,
+    scale: vec3 = vec3.fromValues(1, 1, 1)
+  ) {
+    super(modelName, vec3.create(), vec3.create(), scale);
     this.physicsBody = physicsBody;
   }
 
@@ -32,5 +36,9 @@ export default class PhysicsEntity extends Entity {
     );
     mat4.scale(transformation, transformation, this.scale);
     return transformation;
+  }
+
+  public getPhysicsBody(): CANNON.Body {
+    return this.physicsBody;
   }
 }
