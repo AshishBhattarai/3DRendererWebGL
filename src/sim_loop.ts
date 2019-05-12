@@ -1,9 +1,7 @@
 import RenderEngine from "./render_engine/render_engine";
-import Entity from "./render_engine/Enitity/entity";
 import { vec3 } from "gl-matrix";
 import Camera, { Movement } from "./render_engine/Enitity/camera";
 import DisplayManager from "./render_engine/renderer/display_manager";
-import Terrain from "./render_engine/terrain/terrain";
 import AxisKeyMap, { BoardKeys } from "./input/axis_keymap";
 import PhysicsWorld from "./physics/physics_world";
 import PhysicsEntity from "./physics/physics_entity";
@@ -13,8 +11,6 @@ import SceneManager from "./scene_manager";
 
 export default class SimLoop {
   private renderEngine: RenderEngine;
-  private entites: Entity[] = [];
-  private terrains: Terrain[] = [];
   private camera: Camera;
   private axisKeyMap = new AxisKeyMap();
   private displayManager = DisplayManager.getInstance();
@@ -71,8 +67,6 @@ export default class SimLoop {
     this.currentScene = scene;
     this.camera = scene.camera;
     this.renderEngine.setSkybox(scene.skybox);
-    this.entites = scene.entities;
-    this.terrains = scene.terrains;
   }
 
   public run(frameTime: number) {
@@ -83,8 +77,8 @@ export default class SimLoop {
     this.physicsWorld.process(delta);
     this.currentScene.onFrameLoop(frameTime);
 
-    this.renderEngine.processEntities(this.entites);
-    this.renderEngine.processTerrains(this.terrains);
+    this.renderEngine.processEntities(this.currentScene.entities);
+    this.renderEngine.processTerrains(this.currentScene.terrains);
 
     /* Render */
     this.renderEngine.renderFrame(frameTime, this.camera);
