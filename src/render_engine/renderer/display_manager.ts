@@ -11,6 +11,7 @@ export default class DisplayManager {
   private lastFPSTime: number = 0;
   private delta: number = 0;
   private canvasResizeCallbacks: onCanvasResize[] = [];
+  private isPointerCaptured = false;
 
   constructor() {
     if (DisplayManager.instance) {
@@ -51,6 +52,14 @@ export default class DisplayManager {
         callback(this.canvas.width, this.canvas.height);
       });
     };
+
+    document.addEventListener("pointerlockchange", () => {
+      if (document.pointerLockElement == this.canvas) {
+        this.isPointerCaptured = true;
+      } else {
+        this.isPointerCaptured = false;
+      }
+    });
   }
 
   /**
@@ -92,6 +101,10 @@ export default class DisplayManager {
 
   public pointerLock() {
     this.canvas.requestPointerLock();
+  }
+
+  public getisPointerCaptured(): boolean {
+    return this.isPointerCaptured;
   }
 
   public static getInstance(): DisplayManager {

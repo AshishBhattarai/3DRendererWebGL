@@ -33,6 +33,7 @@ export default class SimLoop {
     this.loadCurrentScene(this.sceneManager.getCurrentScene());
     this.setActionKeys();
     window.onmousemove = (e: MouseEvent) => {
+      if (!this.displayManager.getisPointerCaptured()) return;
       this.camera.processMouseMovment(
         e.movementY,
         e.movementX,
