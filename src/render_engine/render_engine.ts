@@ -109,6 +109,7 @@ export default class RenderEngine {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     this.globalVSBuffer.setCameraPosition(camera.getPosition());
     this.globalVSBuffer.setViewMatrix(camera.getViewMatrix());
+    
 
     // Render Color Models
     this.ColorModels.forEach((model, name) => {

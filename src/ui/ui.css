@@ -92,3 +92,7 @@
     left: 25%;
     border-radius: 3px;
 }
+
+.ui-textBox {
+    padding: 5px, 20px
+}

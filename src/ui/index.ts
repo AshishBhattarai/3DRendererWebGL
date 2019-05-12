@@ -111,6 +111,23 @@ export class Button{
         return this.container;
     }
 }
+export class TextBox{
+    public TextBox:HTMLElement;
+    public label:HTMLElement;
+    public container:HTMLElement;
+    public constructor(label){
+        this.container = document.createElement('div');
+        this.label = document.createElement('div');
+        this.TextBox = document.createElement('div');
+        this.TextBox.classList.add('ui-textBox');
+        this.TextBox.innerHTML = label;
+    }
+    render = () => {
+        this.container.innerHTML = '';
+        this.container.appendChild(this.TextBox);
+        return this.container;
+    }
+}
 
 export class LoadingScreen{
     private container:HTMLElement;
