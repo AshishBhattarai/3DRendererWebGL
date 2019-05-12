@@ -19,6 +19,7 @@ export default class SimLoop {
   private physicsWorld = PhysicsWorld.getInstance();
   private sceneManager = SceneManager.getInstance();
   private currentScene: Scene;
+  private isPaused = false;
 
   public ballMass = 2;
   public ballImpulse = 55;
@@ -52,6 +53,9 @@ export default class SimLoop {
       if (e.code == "KeyR") {
         this.displayManager.pointerLock();
       }
+      if (e.code == "Space") {
+        this.isPaused = !this.isPaused;
+      }
       this.currentScene.onKeyDown(e.code);
     };
   }
@@ -81,7 +85,7 @@ export default class SimLoop {
     /* Input */
     this.processInput(delta);
     /* Process Data*/
-    this.physicsWorld.process(delta);
+    if (!this.isPaused) this.physicsWorld.process(delta);
     this.currentScene.onFrameLoop(frameTime);
 
     this.renderEngine.processEntities(this.currentScene.entities);
