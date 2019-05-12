@@ -1,7 +1,7 @@
 import { Box, Button, Input } from "./index";
-import Main from "../main";
 import PhysicsWorld from "../physics/physics_world";
 import { Vec3 } from "cannon";
+import Main from "../main";
 export function renderUI() {
   let box1 = new Box("Options");
   box1.push(
@@ -9,8 +9,16 @@ export function renderUI() {
       PhysicsWorld.getInstance().world.gravity = new Vec3(0, -value, 0);
     }).render()
   );
-  box1.push(new Input("Force", function(value: number) {}).render());
-  box1.push(new Input("Mass", function(value: number) {}).render());
+  box1.push(
+    new Input("Force", function(value: number) {
+      Main.simLoop.ballImpulse = value;
+    }).render()
+  );
+  box1.push(
+    new Input("Mass", function(value: number) {
+      Main.simLoop.ballMass = value;
+    }).render()
+  );
 
   let box2 = new Box("Scene");
   box2.push(new Button("Earth", function() {}).render());
