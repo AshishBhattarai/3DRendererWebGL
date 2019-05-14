@@ -14,12 +14,12 @@
   "license": "",
   "devDependencies": {
     "@types/webgl2": "0.0.4",
+    "@types/cannon": "^0.1.4",
+    "@types/gl-matrix": "^2.4.5",
     "parcel-bundler": "^1.12.2",
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@types/cannon": "^0.1.4",
-    "@types/gl-matrix": "^2.4.5",
     "cannon": "^0.6.2",
     "gl-matrix": "^3.0.0"
   }
