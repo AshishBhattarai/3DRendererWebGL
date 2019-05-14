@@ -25,7 +25,7 @@ export default class SceneManager {
     if (!this.sceneMap.has("default")) {
       var scene = new Scene({
         name: "default",
-        terrains: [new Terrain(vec2.fromValues(0, 0), 400, 4, 50)],
+        terrains: [new Terrain(vec2.fromValues(0, 0), 500, 40, 50)],
         camera: new Camera(vec3.fromValues(-200, 10, -200))
       });
       this.sceneMap.set(this.currentSceneName, scene);

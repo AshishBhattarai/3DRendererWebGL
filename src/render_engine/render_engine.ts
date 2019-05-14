@@ -1,5 +1,5 @@
 import { gl } from "./ogl_globals";
-import { vec3, mat4 } from "gl-matrix";
+import { vec3, mat4, vec2 } from "gl-matrix";
 import Model from "./model/model";
 import LitColorShader from "./shader/lit_color_shader";
 import DisplayManager from "./renderer/display_manager";
@@ -17,6 +17,10 @@ import SkyboxShader from "./shader/skybox_shader";
 import SkyboxRenderer from "./renderer/skybox_renderer";
 
 export default class RenderEngine {
+  /* Default values */
+  private static readonly FOG_DENSITY = 0.0038;
+  private static readonly FOG_GRADIENT = 20.0;
+
   /* Data */
   private ColorModels: Map<string, Model> = new Map<string, Model>();
   private TextureModels: Map<string, Model> = new Map<string, Model>();
@@ -60,7 +64,7 @@ export default class RenderEngine {
       45.0,
       vpSize[0] / vpSize[1],
       0.1,
-      1000.0
+      350
     );
     displayManager.onCanvasResize((width, height) => {
       mat4.perspective(this.prespectiveProj, 45.0, width / height, 0.1, 1000.0);
@@ -89,6 +93,9 @@ export default class RenderEngine {
     this.globalVSBuffer.setProjectionMatrix(this.prespectiveProj);
     this.globalVSBuffer.setSunPosition(this.sunPosition);
     this.globalFSBuffer.setFogColor(this.fogColor);
+    this.globalVSBuffer.setFogDensityGradient(
+      vec2.fromValues(RenderEngine.FOG_DENSITY, RenderEngine.FOG_GRADIENT)
+    );
 
     console.log(gl.getError());
   }
@@ -109,7 +116,6 @@ export default class RenderEngine {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     this.globalVSBuffer.setCameraPosition(camera.getPosition());
     this.globalVSBuffer.setViewMatrix(camera.getViewMatrix());
-    
 
     // Render Color Models
     this.ColorModels.forEach((model, name) => {

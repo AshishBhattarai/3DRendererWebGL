@@ -6,6 +6,7 @@ in vec3 normal;
 in vec3 toSun;
 in vec3 toCamera;
 in vec2 texCoords;
+in float fogFactor;
 
 struct Material{
 	sampler2D diffuse;
@@ -38,7 +39,7 @@ void main(void){
 		float sFactor=pow(max(dot(in_normal,halfwayDir),0.f),material.shininess);
 		vec3 specular=sFactor*texture(material.specular,texCoords).xyz;
 	}
-	vec3 finalColor=(diffuse+specular)*sunColor.xyz;
+	vec3 finalColor=(diffuse+specular)*sunColor;
 	finalColor=max(finalColor,sceneAmbient*samDiffuse);
-	FragColor=vec4(finalColor,1.f);
+	FragColor=vec4(mix(fogColor,finalColor,fogFactor),1.f);
 }

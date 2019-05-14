@@ -5,6 +5,7 @@ out vec4 FragColor;
 in vec3 normal;
 in vec3 toSun;
 in vec3 toCamera;
+in float fogFactor;
 
 struct Material{
 	vec3 diffuse;
@@ -34,5 +35,5 @@ void main(void){
 	vec3 specular=sFactor*material.specular;
 	vec3 finalColor=(diffuse+specular)*sunColor;
 	finalColor=max(finalColor,sceneAmbient*diffuse);
-	FragColor=vec4(finalColor,1.f);
+	FragColor=vec4(mix(fogColor,finalColor,fogFactor),1.f);
 }

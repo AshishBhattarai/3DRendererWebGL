@@ -7,6 +7,7 @@ out vec3 normal;
 out vec3 toSun;
 out vec3 toCamera;
 out vec2 texCoords;
+out float fogFactor;
 
 uniform mat4 tranformationMat;
 
@@ -15,6 +16,7 @@ layout(std140)uniform GlobalVSData{
 	mat4 viewMat;
 	vec3 cameraPosition;
 	vec3 sunPosition;
+	vec2 fogDensityGradient;
 };
 
 void main(void){
@@ -24,4 +26,6 @@ void main(void){
 	toSun=sunPosition-worldposition.xyz;
 	toCamera=cameraPosition-worldposition.xyz;
 	texCoords=aTexCoords;
+	float distance=length(toCamera);
+	fogFactor=exp(-pow((distance*fogDensityGradient.x),fogDensityGradient.y));
 }
