@@ -3,7 +3,7 @@ import {
   lit_texture_shader_fs,
   lit_texture_shader_vs
 } from "./glsl/shader_source";
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 import { mat4 } from "gl-matrix";
 import Material from "../model/material";
 

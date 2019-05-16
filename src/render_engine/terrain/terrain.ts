@@ -1,8 +1,8 @@
 import { vec2, mat4, vec3 } from "gl-matrix";
-import Mesh, { ModelType } from "../model/mesh";
+import Mesh, { MeshFlags } from "../model/mesh";
 import Material from "../model/material";
 import { MaterialShader } from "../shader/shader_config";
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 import Texture, { TextureType } from "../model/texture";
 
 export default class Terrain {
@@ -73,15 +73,13 @@ export default class Terrain {
       }
     }
     console.log(vertices.length + " " + normals.length);
-    this.mesh = new Mesh(
-      {
-        vertexData: new Float32Array(vertices),
-        normalData: new Float32Array(normals),
-        indexData: new Uint32Array(indices),
-        uvData: new Float32Array(texCoords)
-      },
-      ModelType.TERRAIN
-    );
+    this.mesh = new Mesh({
+      vertexData: new Float32Array(vertices),
+      normalData: new Float32Array(normals),
+      indexData: new Uint32Array(indices),
+      uvData: new Float32Array(texCoords)
+    });
+    this.mesh.setFlags(this.mesh.getFlags() | MeshFlags.TERRAIN);
   }
 
   public getMesh(): Mesh {

@@ -1,4 +1,4 @@
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 
 export default class Shader {
   private program: WebGLProgram;

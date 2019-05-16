@@ -1,6 +1,6 @@
 import Shader from "./shader";
 import { skybox_shader_vs, skybox_shader_fs } from "./glsl/shader_source";
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 import { mat4, mat3 } from "gl-matrix";
 import DisplayManager from "../renderer/display_manager";
 

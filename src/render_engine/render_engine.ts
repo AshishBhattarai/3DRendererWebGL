@@ -1,4 +1,4 @@
-import { gl } from "./ogl_globals";
+import { gl } from "./ogl/oglGlobals";
 import { vec3, mat4, vec2 } from "gl-matrix";
 import Model from "./model/model";
 import LitColorShader from "./shader/lit_color_shader";

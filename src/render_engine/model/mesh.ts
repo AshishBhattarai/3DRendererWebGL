@@ -1,104 +1,64 @@
-import { gl } from "../ogl_globals";
 import { ShaderConfig } from "../shader/shader_config";
+import OGLVertexArray, { DrawMode } from "../ogl/oglVertexArray";
 
 export interface IMesh {
   vertexData: Float32Array;
-  normalData?: Float32Array;
+  normalData: Float32Array;
   indexData: Uint32Array;
   uvData?: Float32Array;
 }
 
-export enum ModelType {
-  NONE,
-  DEFAULT,
-  TERRAIN
+export enum MeshFlags {
+  NONE = 0,
+  DEFAULT = 1 << 0,
+  TERRAIN = 1 << 1,
+  UV = 1 << 2
 }
 
 export default class Mesh {
   private index_cnt: number = 0;
+  private vao: OGLVertexArray;
+  private drawMode: DrawMode;
+  private flags: MeshFlags;
 
-  protected vao: WebGLVertexArrayObject;
-  private vertexBuffer: WebGLBuffer;
-  private normalBuffer: WebGLBuffer;
-  private indexBuffer: WebGLBuffer;
-  private uvBuffer: WebGLBuffer;
-
-  private type: ModelType;
-  private drawMode: GLenum;
-
-  constructor(iMesh: IMesh, type: ModelType = ModelType.NONE) {
-    this.index_cnt = iMesh.indexData.length;
-    this.type = type;
-    this.drawMode =
-      this.type == ModelType.TERRAIN ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
-    this.createBuffer();
-
-    gl.bindVertexArray(this.vao);
-
-    //TODO: this(enable attrib) on main renderer -> render_engine.ts
-    gl.enableVertexAttribArray(ShaderConfig.VERTEX_LOC);
-    gl.enableVertexAttribArray(ShaderConfig.NORMAL_LOC);
-    gl.enableVertexAttribArray(ShaderConfig.UV_LOC);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, iMesh.vertexData, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(ShaderConfig.VERTEX_LOC, 3, gl.FLOAT, false, 0, 0);
-
-    if (iMesh.normalData) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, iMesh.normalData, gl.STATIC_DRAW);
-      gl.vertexAttribPointer(ShaderConfig.NORMAL_LOC, 3, gl.FLOAT, false, 0, 0);
-    } else {
-      gl.deleteBuffer(this.normalBuffer);
-      gl.disableVertexAttribArray(ShaderConfig.NORMAL_LOC);
-      this.normalBuffer = null;
-    }
+  constructor(iMesh: IMesh) {
+    var flags = MeshFlags.NONE;
+    this.vao = new OGLVertexArray();
+    this.vao.bind();
+    this.vao.createAttribute(ShaderConfig.VERTEX_LOC, 3, iMesh.vertexData);
+    this.vao.createAttribute(ShaderConfig.NORMAL_LOC, 3, iMesh.normalData);
     if (iMesh.uvData) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, iMesh.uvData, gl.STATIC_DRAW);
-      gl.vertexAttribPointer(ShaderConfig.UV_LOC, 2, gl.FLOAT, false, 0, 0);
-    } else {
-      gl.deleteBuffer(this.uvBuffer);
-      gl.disableVertexAttribArray(ShaderConfig.UV_LOC);
-      this.uvBuffer = null;
+      this.vao.createAttribute(ShaderConfig.UV_LOC, 2, iMesh.uvData);
+      this.flags |= MeshFlags.UV;
     }
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, iMesh.indexData, gl.STATIC_DRAW);
-    gl.bindVertexArray(null);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-  }
-
-  private createBuffer(): void {
-    this.vao = gl.createVertexArray();
-    this.vertexBuffer = gl.createBuffer();
-    this.normalBuffer = gl.createBuffer();
-    this.indexBuffer = gl.createBuffer();
-    this.uvBuffer = gl.createBuffer();
+    this.vao.createIndex(iMesh.indexData);
+    this.vao.enableAttribs();
+    this.vao.unBind();
+    this.vao.unBindIndex();
+    this.index_cnt = this.vao.getIndexCount();
+    this.setFlags(flags);
   }
 
   public bindMesh(): void {
-    gl.bindVertexArray(this.vao);
+    this.vao.bind();
   }
 
   public drawMesh(): void {
-    gl.drawElements(this.drawMode, this.index_cnt, gl.UNSIGNED_INT, 0);
+    this.vao.draw(this.drawMode);
+  }
+
+  public setFlags(flags: MeshFlags): void {
+    if (flags & MeshFlags.TERRAIN) this.drawMode = DrawMode.TRIANGLE_STRIP;
+    else this.drawMode = DrawMode.TRIANGLES;
+    this.flags = flags;
+  }
+
+  public getFlags(): MeshFlags {
+    return this.flags;
   }
 
   public release(): void {
-    if ((this.type = ModelType.DEFAULT)) return;
-
-    gl.deleteBuffer(this.vertexBuffer);
-    gl.deleteBuffer(this.normalBuffer);
-    gl.deleteBuffer(this.indexBuffer);
-    if (this.uvBuffer) gl.deleteBuffer(this.uvBuffer);
-    gl.deleteVertexArray(this.vao);
-
-    this.vertexBuffer = null;
-    this.normalBuffer = null;
-    this.indexBuffer = null;
-    this.uvBuffer = null;
-    this.vao = null;
+    if (this.flags & MeshFlags.DEFAULT) return;
+    this.vao.release();
   }
 }

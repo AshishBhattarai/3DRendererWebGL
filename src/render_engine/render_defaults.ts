@@ -1,7 +1,7 @@
 import Texture, { TextureType } from "./model/texture";
-import Mesh, { ModelType } from "./model/mesh";
+import Mesh, { MeshFlags } from "./model/mesh";
 import Skybox from "./model/skybox";
-import { gl } from "./ogl_globals";
+import { gl } from "./ogl/oglGlobals";
 
 // Default textures / models for renderer
 
@@ -246,14 +246,12 @@ export default class RenderDefaults {
       0.0
     ]);
 
-    this.mesh = new Mesh(
-      {
-        vertexData: vertices,
-        normalData: normals,
-        indexData: indices
-      },
-      ModelType.DEFAULT
-    );
+    this.mesh = new Mesh({
+      vertexData: vertices,
+      normalData: normals,
+      indexData: indices
+    });
+    this.mesh.setFlags(this.mesh.getFlags() | MeshFlags.DEFAULT);
     this.resLoadComplete();
   }
 

@@ -1,5 +1,5 @@
 import Shader from "./shader";
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 import { lit_color_shader_vs, lit_color_shader_fs } from "./glsl/shader_source";
 import { vec3, mat4 } from "gl-matrix";
 import Material from "../model/material";

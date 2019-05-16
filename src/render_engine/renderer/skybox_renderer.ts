@@ -1,7 +1,7 @@
 import Mesh from "../model/mesh";
 import Skybox from "../model/skybox";
 import RenderDefaults from "../render_defaults";
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 import SkyboxShader from "../shader/skybox_shader";
 import { mat4 } from "gl-matrix";
 

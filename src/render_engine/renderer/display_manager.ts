@@ -1,4 +1,4 @@
-import ogl_globals = require("../ogl_globals");
+import ogl_globals = require("../ogl/oglGlobals");
 
 type onCanvasResize = (width: number, height: number) => void;
 export default class DisplayManager {

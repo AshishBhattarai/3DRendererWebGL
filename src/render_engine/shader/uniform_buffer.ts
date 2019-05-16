@@ -1,4 +1,4 @@
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 
 export default class UniformBuffer {
   // Constant base alignments, aligned offset must be multiple of base alignment

@@ -1,4 +1,4 @@
-import { gl } from "../ogl_globals";
+import { gl } from "../ogl/oglGlobals";
 import { TextureType } from "./texture";
 
 export default class Cubemap {
