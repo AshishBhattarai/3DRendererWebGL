@@ -18,8 +18,11 @@ export default class LitTextureShader extends Shader {
   /* Materials */
   private shininessLoc: WebGLUniformLocation;
 
-  constructor() {
-    super(lit_texture_shader_vs, lit_texture_shader_fs);
+  constructor(
+    vsSource = lit_texture_shader_vs,
+    fsSource = lit_texture_shader_fs
+  ) {
+    super(vsSource, fsSource);
 
     this.start();
     this.shininessLoc = this.getUniformLocation("material.shininess");

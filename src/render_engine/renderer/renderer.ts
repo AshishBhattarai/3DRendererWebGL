@@ -3,17 +3,29 @@ import Model from "../model/model";
 import LitTextureShader from "../shader/lit_texture_shader";
 import Entity from "../Enitity/entity";
 import Terrain from "../terrain/terrain";
+import AnimModel from "../model/anim_model";
+import LitTextureAnimShader from "../shader/lit_texture_anim_shader";
+import SAnimator from "../model/sanimator";
+import AnimEntity from "../Enitity/anim_entity";
+import LitColorAnimShader from "../shader/lit_color_anim_shader";
 
 export default class Renderer {
-  litColorShader: LitColorShader;
-  litTextureShader: LitTextureShader;
+  private litColorShader: LitColorShader;
+  private litTextureShader: LitTextureShader;
+  private litTextureAnimShader: LitTextureAnimShader;
+  private litColorAnimShader: LitColorAnimShader;
+  private animator = SAnimator.getInstance();
 
   constructor(
     litColorShader: LitColorShader,
-    litTextureShader: LitTextureShader
+    litTextureShader: LitTextureShader,
+    litTextureAnimShader: LitTextureAnimShader,
+    litColorAnimShader: LitColorAnimShader
   ) {
     this.litColorShader = litColorShader;
     this.litTextureShader = litTextureShader;
+    this.litTextureAnimShader = litTextureAnimShader;
+    this.litColorAnimShader = litColorAnimShader;
   }
 
   public renderLitTexture(model: Model, entites: Entity[]) {
@@ -44,6 +56,40 @@ export default class Renderer {
       this.litTextureShader.loadTranformation(terrain.getTransMat());
       mesh.bindMesh();
       mesh.drawMesh();
+    }
+  }
+
+  public renderLitTextureAnim(
+    delta: number,
+    animModel: AnimModel,
+    entites: AnimEntity[]
+  ) {
+    animModel.mesh.bindMesh();
+    this.litTextureAnimShader.start();
+    this.litTextureAnimShader.loadMaterial(animModel.material);
+    for (let entity of entites) {
+      this.animator.processAnimation(delta, entity, animModel);
+      this.litTextureAnimShader.loadBoneTransforms(
+        animModel.getBoneTranforms()
+      );
+      this.litTextureAnimShader.loadTranformation(entity.getTransMatrix());
+      animModel.mesh.drawMesh();
+    }
+  }
+
+  public renderLitColorAnim(
+    delta: number,
+    animModel: AnimModel,
+    entites: AnimEntity[]
+  ) {
+    animModel.mesh.bindMesh();
+    this.litColorAnimShader.start();
+    this.litColorAnimShader.loadMaterial(animModel.material);
+    for (let entity of entites) {
+      this.animator.processAnimation(delta, entity, animModel);
+      this.litColorAnimShader.loadBoneTransforms(animModel.getBoneTranforms());
+      this.litColorAnimShader.loadTranformation(entity.getTransMatrix());
+      animModel.mesh.drawMesh();
     }
   }
 }

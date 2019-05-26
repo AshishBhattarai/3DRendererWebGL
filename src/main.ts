@@ -15,7 +15,7 @@ export default class Main {
   private static renderEngine: RenderEngine;
   private static simLoop: SimLoop;
   private static modelsCount: number;
-  private static ui : UI;
+  private static ui: UI;
   public static main(): void {
     this.display.createCanvas([window.innerWidth, window.innerHeight]);
     var renderDefaults = RenderDefaults.getInstance();

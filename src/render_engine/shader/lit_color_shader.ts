@@ -13,8 +13,8 @@ export default class LitColorShader extends Shader {
   private specularLoc: WebGLUniformLocation;
   private shininessLoc: WebGLUniformLocation;
 
-  constructor() {
-    super(lit_color_shader_vs, lit_color_shader_fs);
+  constructor(vsSource = lit_color_shader_vs, fsSource = lit_color_shader_fs) {
+    super(vsSource, fsSource);
 
     this.start();
     /* Materices */

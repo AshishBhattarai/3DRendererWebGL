@@ -1,21 +1,20 @@
 import Mesh from "./mesh";
 import Material from "./material";
-import RenderDefaults from "../render_defaults";
 
 export interface IModel {
-  mesh?: Mesh;
-  material?: Material;
   name: string;
+  mesh: Mesh;
+  material?: Material;
 }
 
 export default class Model {
+  private name: string;
   public mesh: Mesh;
   public material?: Material;
-  private name: string;
 
   constructor(iModel: IModel) {
     this.name = iModel.name;
-    this.mesh = iModel.mesh || RenderDefaults.getInstance().getMesh();
+    this.mesh = iModel.mesh;
     this.material = iModel.material || new Material();
   }
 
@@ -25,6 +24,6 @@ export default class Model {
 
   public release() {
     this.mesh.release();
-    this.material.release()
+    this.material.release();
   }
 }

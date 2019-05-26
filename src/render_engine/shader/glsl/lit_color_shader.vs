@@ -14,7 +14,6 @@ layout(std140)uniform GlobalVSData{
 	mat4 viewMat;
 	vec3 cameraPosition;
 	vec3 sunPosition;
-	float fogDensity;
 	vec2 fogDensityGradient;
 };
 

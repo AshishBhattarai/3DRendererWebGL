@@ -42,7 +42,7 @@ export default class SimLoop {
     };
 
     // scenes
-    this.createPlanetMoonScene();
+    // this.createPlanetMoonScene();
     this.createBrickScene();
 
     this.sceneManager.setCurrentScene("brickscene");
@@ -93,7 +93,7 @@ export default class SimLoop {
     this.renderEngine.processTerrains(this.currentScene.terrains);
 
     /* Render */
-    this.renderEngine.renderFrame(frameTime, this.camera);
+    this.renderEngine.renderFrame(delta, this.camera);
   }
 
   private createPlanetMoonScene() {
@@ -141,7 +141,7 @@ export default class SimLoop {
 
     var world = this.physicsWorld.world;
     var ballShape = new CANNON.Sphere(1);
-    var brickShape = new CANNON.Box(new Vec3(0.5, 0.125, 0.25));
+    // var brickShape = new CANNON.Box(new Vec3(0.5, 0.125, 0.25));
 
     // terrain plane
     let planeBody = new CANNON.Body({
@@ -155,18 +155,16 @@ export default class SimLoop {
     );
     world.addBody(planeBody);
 
-    // brick grid
-    for (let y = 0.125, i = 1; i < 8; y += 0.266, i++) {
-      for (let z = 0.256, j = 1; j < 8; z += 0.516, j++) {
-        for (let x = 0.506, k = 1; k < 8; x += 1.16, k++) {
-          let brickPhysicsBody = new CANNON.Body({
-            mass: 1,
-            shape: brickShape,
-            position: new CANNON.Vec3(-(x + 200), y, -(z + 200))
-          });
-          let brickPhysicsEntity = new PhysicsEntity(brickPhysicsBody, "brick");
-          entities.push(brickPhysicsEntity);
-          world.addBody(brickPhysicsBody);
+    var camPos = this.camera.getPosition();
+    // goat grid
+    for (let y = 1, i = 1; i < 5; y += 2, i++) {
+      for (let z = 1, j = 1; j < 5; z += 2, j++) {
+        for (let x = 1, k = 1; k < 5; x += 2, k++) {
+          let goatEntity = new Entity(
+            "goat",
+            vec3.fromValues(camPos[0] - 10 + x, y, camPos[2] - 10 + z)
+          );
+          entities.push(goatEntity);
         }
       }
     }

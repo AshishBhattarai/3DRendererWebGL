@@ -15,6 +15,11 @@ import Terrain from "./terrain/terrain";
 import Skybox from "./model/skybox";
 import SkyboxShader from "./shader/skybox_shader";
 import SkyboxRenderer from "./renderer/skybox_renderer";
+import LitTextureAnimShader from "./shader/lit_texture_anim_shader";
+import AnimModel from "./model/anim_model";
+import SAnimator from "./model/sanimator";
+import AnimEntity from "./Enitity/anim_entity";
+import LitColorAnimShader from "./shader/lit_color_anim_shader";
 
 export default class RenderEngine {
   /* Default values */
@@ -22,15 +27,19 @@ export default class RenderEngine {
   private static readonly FOG_GRADIENT = 20.0;
 
   /* Data */
-  private ColorModels: Map<string, Model> = new Map<string, Model>();
-  private TextureModels: Map<string, Model> = new Map<string, Model>();
-  private ColorModelsMap: Map<string, Entity[]> = new Map<string, Entity[]>();
-  private TextureModelsMap: Map<string, Entity[]> = new Map<string, Entity[]>();
+  private modelsMap: Map<string, Model> = new Map();
+  /*Entities */
+  private coloredEntityMap: Map<string, Entity[]> = new Map();
+  private texturedEntityMap: Map<string, Entity[]> = new Map();
+  private coloredAnimEntityMap: Map<string, Entity[]> = new Map();
+  private texturedAnimEntityMap: Map<string, Entity[]> = new Map();
   private terrians: Terrain[];
 
   /* Shaders */
   private litColorShader: LitColorShader;
   private litTextureShader: LitTextureShader;
+  private litTextureAnimShader: LitTextureAnimShader;
+  private litColorAnimShader: LitColorAnimShader;
   private skyboxShader: SkyboxShader;
 
   /* Renderer */
@@ -47,11 +56,20 @@ export default class RenderEngine {
   private skybox: Skybox;
   private fogColor: vec3;
 
+  private animator: SAnimator = SAnimator.getInstance();
+
   constructor() {
     this.litColorShader = new LitColorShader();
     this.litTextureShader = new LitTextureShader();
+    this.litTextureAnimShader = new LitTextureAnimShader();
+    this.litColorAnimShader = new LitColorAnimShader();
     this.skyboxShader = new SkyboxShader();
-    this.renderer = new Renderer(this.litColorShader, this.litTextureShader);
+    this.renderer = new Renderer(
+      this.litColorShader,
+      this.litTextureShader,
+      this.litTextureAnimShader,
+      this.litColorAnimShader
+    );
     this.skyboxRenderer = new SkyboxRenderer(this.skyboxShader);
     this.globalFSBuffer = new GlobalFSBuffer();
     this.globalVSBuffer = new GlobalVSBuffer();
@@ -74,13 +92,25 @@ export default class RenderEngine {
     this.bindUniformBuffer(
       ShaderConfig.GlobalVSBuffer,
       this.globalVSBuffer.getBindingPoint(),
-      [this.litTextureShader, this.litColorShader, this.skyboxShader]
+      [
+        this.litTextureShader,
+        this.litColorShader,
+        this.litTextureAnimShader,
+        this.litColorAnimShader,
+        this.skyboxShader
+      ]
     );
 
     this.bindUniformBuffer(
       ShaderConfig.GlobalFSBuffer,
       this.globalFSBuffer.getBindingPoint(),
-      [this.litTextureShader, this.litColorShader, this.skyboxShader]
+      [
+        this.litTextureShader,
+        this.litColorShader,
+        this.litTextureAnimShader,
+        this.litColorAnimShader,
+        this.skyboxShader
+      ]
     );
 
     this.sunPosition = vec3.fromValues(0, 500, 10);
@@ -112,68 +142,92 @@ export default class RenderEngine {
     gl.clearColor(1, 0, 0, 1);
   }
 
-  public renderFrame(frameTime: number, camera: Camera): void {
+  public renderFrame(delta: number, camera: Camera): void {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     this.globalVSBuffer.setCameraPosition(camera.getPosition());
     this.globalVSBuffer.setViewMatrix(camera.getViewMatrix());
 
     // Render Color Models
-    this.ColorModels.forEach((model, name) => {
-      let list = this.ColorModelsMap.get(name);
-      this.renderer.renderLitColor(model, list);
-      list.splice(0, list.length);
+    this.coloredEntityMap.forEach((entites: Entity[], name: string) => {
+      let model = this.modelsMap.get(name);
+      this.renderer.renderLitColor(model, entites);
     });
 
     // Render Texture Models
-    this.TextureModels.forEach((model, name) => {
-      let list = this.TextureModelsMap.get(name);
-      this.renderer.renderLitTexture(model, list);
-      list.splice(0, list.length);
+    this.texturedEntityMap.forEach((entites: Entity[], name: string) => {
+      let model = this.modelsMap.get(name);
+      this.renderer.renderLitTexture(model, entites);
+    });
+
+    // Render Animated Texture Models
+    this.texturedAnimEntityMap.forEach(
+      (entites: AnimEntity[], name: string) => {
+        let model = this.modelsMap.get(name);
+        this.renderer.renderLitTextureAnim(delta, model as AnimModel, entites);
+      }
+    );
+
+    // Render Animated Color Models
+    this.coloredAnimEntityMap.forEach((entites: AnimEntity[], name: string) => {
+      let model = this.modelsMap.get(name);
+      this.renderer.renderLitColorAnim(delta, model as AnimModel, entites);
     });
 
     // Render Terrains
     this.renderer.renderTerrain(this.terrians);
-
     this.skyboxRenderer.render(this.skybox, camera.getViewMatrix());
+
+    this.coloredEntityMap.clear();
+    this.texturedEntityMap.clear();
+    this.coloredAnimEntityMap.clear();
+    this.texturedAnimEntityMap.clear();
   }
 
   public addModel(model: Model, name: string) {
-    switch (model.material.materialShader) {
-      case MaterialShader.LIT_MATERIAL_COLOR_SHADER:
-        this.ColorModels.set(name, model);
-        this.ColorModelsMap.set(name, []);
-        break;
-
-      case MaterialShader.LIT_MATERIAL_TEXTURE_SHADER:
-        this.TextureModels.set(name, model);
-        this.TextureModelsMap.set(name, []);
-        break;
-    }
+    this.modelsMap.set(name, model);
   }
 
   /* Removes the model from the list and releases it */
   public removeModel(name: string) {
-    var model: Model;
-    if (this.ColorModels.has(name)) {
-      model = this.ColorModels.get(name);
-      this.ColorModels.delete(name);
-      this.TextureModelsMap.delete(name);
-      model.release();
-    } else if (this.TextureModels.has(name)) {
-      model = this.TextureModels.get(name);
-      this.ColorModels.delete(name);
-      this.TextureModelsMap.delete(name);
+    if (this.modelsMap.has(name)) {
+      let model = this.modelsMap.get(name);
       model.release();
     }
   }
 
-  public processEntities(entities: Entity[]) {
+  public processEntities(entities: Entity[] | AnimEntity[]) {
     for (let entity of entities) {
+      if (!this.modelsMap.has(entity.modelName)) return;
       let name = entity.modelName;
-      if (this.ColorModels.has(name)) {
-        this.ColorModelsMap.get(name).push(entity);
-      } else if (this.TextureModels.has(name)) {
-        this.TextureModelsMap.get(name).push(entity);
+      let model = this.modelsMap.get(entity.modelName);
+      if (entity instanceof AnimEntity) {
+        /* Animated entity */
+        if (entity.isAnimate) {
+          switch (model.material.materialShader) {
+            case MaterialShader.LIT_MATERIAL_TEXTURE_SHADER:
+              if (!this.texturedAnimEntityMap.has(name))
+                this.texturedAnimEntityMap.set(name, []);
+              this.texturedAnimEntityMap.get(name).push(entity);
+              break;
+            case MaterialShader.LIT_MATERIAL_COLOR_SHADER:
+              if (!this.coloredAnimEntityMap.has(name))
+                this.coloredAnimEntityMap.set(name, []);
+              this.coloredAnimEntityMap.get(name).push(entity);
+          }
+          continue;
+        }
+      }
+      /* Non Animated entites */
+      switch (model.material.materialShader) {
+        case MaterialShader.LIT_MATERIAL_TEXTURE_SHADER:
+          if (!this.texturedEntityMap.has(name))
+            this.texturedEntityMap.set(name, []);
+          this.texturedEntityMap.get(name).push(entity);
+          break;
+        case MaterialShader.LIT_MATERIAL_COLOR_SHADER:
+          if (!this.coloredEntityMap.has(name))
+            this.coloredEntityMap.set(name, []);
+          this.coloredEntityMap.get(name).push(entity);
       }
     }
   }

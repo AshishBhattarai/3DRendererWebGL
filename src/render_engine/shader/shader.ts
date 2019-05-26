@@ -51,7 +51,7 @@ export default class Shader {
     gl.useProgram(null);
   }
 
-  public delete(): void {
+  public release(): void {
     gl.deleteProgram(this.program);
     this.program = null;
   }

@@ -6,13 +6,16 @@ export interface IMesh {
   normalData: Float32Array;
   indexData: Uint32Array;
   uvData?: Float32Array;
+  boneIds?: Uint32Array;
+  weightData?: Float32Array;
 }
 
 export enum MeshFlags {
   NONE = 0,
   DEFAULT = 1 << 0,
   TERRAIN = 1 << 1,
-  UV = 1 << 2
+  UV = 1 << 2,
+  RIGGED = 1 << 3
 }
 
 export default class Mesh {
@@ -30,6 +33,11 @@ export default class Mesh {
     if (iMesh.uvData) {
       this.vao.createAttribute(ShaderConfig.UV_LOC, 2, iMesh.uvData);
       this.flags |= MeshFlags.UV;
+    }
+    if (iMesh.boneIds) {
+      this.vao.createAttribute(ShaderConfig.BONE_ID_LOC, 4, iMesh.boneIds);
+      this.vao.createAttribute(ShaderConfig.WEIGHT_LOC, 4, iMesh.weightData);
+      this.flags |= MeshFlags.RIGGED;
     }
     this.vao.createIndex(iMesh.indexData);
     this.vao.enableAttribs();
