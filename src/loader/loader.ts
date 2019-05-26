@@ -1,12 +1,14 @@
 import Model from "../render_engine/model/model";
 import ObjParser from "./obj_parser";
+import DaeParser from "./dae_parser";
+import AnimModel from "../render_engine/model/anim_model";
 
 type ModelLoadedCallback = (
   mode: Model,
   name: String,
   loadCounter: number
 ) => void;
-type ParserCallaback = (data: any) => void;
+type ParserCallaback = (data: string) => void;
 
 export default class Loader {
   private modelLoadedCallback: ModelLoadedCallback;
@@ -62,6 +64,26 @@ export default class Loader {
     this.modelLoadedCallback(model, name, this.loadCounter);
   }
 
+  private parseDaeModel(data: string, name: string) {
+    --this.loadCounter;
+    var dae = new DaeParser(data);
+    var model: Model;
+    if (dae.getHasAnimation()) {
+      model = new AnimModel({
+        mesh: dae.getMeshes()[0],
+        name: name,
+        boneCount: dae.getboneCount(),
+        rootBone: dae.getRootBone()
+      });
+    } else {
+      model = new Model({
+        mesh: dae.getMeshes()[0],
+        name: name
+      });
+    }
+    this.modelLoadedCallback(model, name, this.loadCounter);
+  }
+
   public loadModels(paths: string[]) {
     this.loadCounter = paths.length;
     for (let path of paths) {
@@ -72,6 +94,10 @@ export default class Loader {
             this.parseObjModel(data, nameExt[0])
           );
           break;
+        case "dae":
+          this.loadData(path, "text", data =>
+            this.parseDaeModel(data, nameExt[0])
+          );
         default:
           console.log("Unsupported model type ", nameExt[1]);
           break;
